@@ -13,10 +13,10 @@ import {
 } from 'expo-router/ui';
 import { Pressable, StyleSheet, View } from 'react-native';
 
+import { Glass } from '@/components/ui/glass';
 import { Icon, type IconName } from '@/components/ui/icon';
 import { Text } from '@/components/ui/text';
-import { MaxContentWidth, Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+import { MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 
 const TABS: { name: string; href: '/' | '/log' | '/workouts' | '/progress' | '/profile'; label: string; icon: IconName }[] = [
   { name: 'index', href: '/', label: 'Today', icon: 'flame' },
@@ -43,13 +43,13 @@ export default function AppTabs() {
   );
 }
 
-function BottomBar(props: TabListProps) {
-  const theme = useTheme();
+function BottomBar({ children, ...props }: TabListProps) {
   return (
-    <View
-      {...props}
-      style={[styles.bar, { backgroundColor: theme.surface, borderTopColor: theme.border }]}
-    />
+    <View {...props} style={styles.barWrap}>
+      <Glass radius={Radius.pill} style={styles.bar}>
+        {children}
+      </Glass>
+    </View>
   );
 }
 
@@ -71,20 +71,21 @@ function TabButton({
 }
 
 const styles = StyleSheet.create({
-  bar: {
+  barWrap: {
     position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+    bottom: Spacing[4],
+    left: Spacing[4],
+    right: Spacing[4],
+    alignItems: 'center',
+  },
+  bar: {
+    width: '100%',
+    maxWidth: MaxContentWidth,
     flexDirection: 'row',
-    justifyContent: 'center',
-    borderTopWidth: StyleSheet.hairlineWidth,
-    paddingTop: Spacing[2],
-    paddingBottom: Spacing[5],
+    paddingVertical: Spacing[2],
   },
   button: {
     flex: 1,
-    maxWidth: MaxContentWidth / 5,
     alignItems: 'center',
     gap: 2,
   },

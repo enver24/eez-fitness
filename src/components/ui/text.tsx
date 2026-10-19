@@ -6,7 +6,7 @@ import { useTheme } from '@/hooks/use-theme';
 export type TextProps = RNTextProps & {
   variant?: TypeVariant;
   color?: ThemeColor;
-  /** Use the rounded font, which suits large numbers. */
+  /** Use the rounded font, which suits numbers. Always on for `number`. */
   rounded?: boolean;
   align?: 'left' | 'center' | 'right';
 };
@@ -26,8 +26,7 @@ export function Text({
       style={[
         Type[variant],
         { color: theme[color], textAlign: align },
-        rounded && { fontFamily: Fonts.rounded },
-        variant === 'overline' && { textTransform: 'uppercase' },
+        (rounded || variant === 'number') && { fontFamily: Fonts.rounded },
         style,
       ]}
       {...rest}

@@ -9,6 +9,7 @@ import { Screen } from '@/components/ui/screen';
 import { SectionHeader } from '@/components/ui/section-header';
 import { Text } from '@/components/ui/text';
 import { Spacing } from '@/constants/theme';
+import { withAlpha } from '@/constants/themes';
 import { sampleGoalWeight, sampleLoggedDays, sampleWeights } from '@/data/sample';
 import { useTheme } from '@/hooks/use-theme';
 import { comingSoon } from '@/lib/coming-soon';
@@ -29,18 +30,18 @@ export default function ProgressScreen() {
       <Card>
         <View style={styles.weightHeader}>
           <View>
-            <Text variant="overline" color="textSecondary">
+            <Text variant="label" color="textSecondary">
               Weight
             </Text>
-            <Text variant="display" rounded>
+            <Text variant="number" style={styles.bigNumber}>
               {current.toFixed(1)}
-              <Text variant="headline" color="textSecondary">
+              <Text variant="bodyStrong" color="textSecondary">
                 {' '}kg
               </Text>
             </Text>
           </View>
-          <View style={[styles.changePill, { backgroundColor: theme.accentSoft }]}>
-            <Text variant="caption" color="accent" style={styles.changeText}>
+          <View style={[styles.changePill, { backgroundColor: withAlpha(theme.accent, 0.18) }]}>
+            <Text variant="caption" color="accent" rounded style={styles.changeText}>
               {change > 0 ? '+' : ''}
               {change.toFixed(1)} kg · 8 wks
             </Text>
@@ -83,9 +84,9 @@ export default function ProgressScreen() {
               <View
                 style={[
                   styles.dayDot,
-                  { backgroundColor: logged ? theme.accent : theme.track },
+                  { backgroundColor: logged ? theme.button : theme.fill },
                 ]}>
-                {logged && <Icon name="checkmark" size={12} color="textInverse" />}
+                {logged && <Icon name="checkmark" size={13} color="onButton" />}
               </View>
               <Text variant="caption" color="textTertiary">
                 {DAY_LABELS[index]}
@@ -110,7 +111,11 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   changeText: {
-    fontWeight: '600',
+    fontWeight: '800',
+  },
+  bigNumber: {
+    fontSize: 44,
+    lineHeight: 48,
   },
   goalRow: {
     flexDirection: 'row',

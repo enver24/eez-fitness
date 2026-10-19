@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Glass } from '@/components/ui/glass';
 import { Icon } from '@/components/ui/icon';
 import { ListRow } from '@/components/ui/list-row';
 import { Notice } from '@/components/ui/notice';
@@ -29,7 +30,7 @@ export default function LogScreen() {
   return (
     <Screen title="Log food">
       {/* Meal picker */}
-      <View style={[styles.segmented, { backgroundColor: theme.surfaceMuted }]}>
+      <Glass radius={Radius.md} style={styles.segmented}>
         {MEAL_OPTIONS.map((option) => {
           const selected = option.value === meal;
           return (
@@ -38,17 +39,17 @@ export default function LogScreen() {
               onPress={() => setMeal(option.value)}
               accessibilityRole="tab"
               accessibilityState={{ selected }}
-              style={[styles.segment, selected && { backgroundColor: theme.surface }]}>
-              <Text variant="caption" color={selected ? 'text' : 'textSecondary'} style={styles.segmentLabel}>
+              style={[styles.segment, selected && { backgroundColor: theme.button }]}>
+              <Text variant="caption" color={selected ? 'onButton' : 'textSecondary'} style={styles.segmentLabel}>
                 {option.label}
               </Text>
             </Pressable>
           );
         })}
-      </View>
+      </Glass>
 
       {/* Search */}
-      <View style={[styles.search, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+      <Glass radius={Radius.md} style={styles.search}>
         <Icon name="search" size={17} color="textTertiary" />
         <TextInput
           placeholder="Search foods, e.g. banana"
@@ -57,16 +58,16 @@ export default function LogScreen() {
           returnKeyType="search"
           onSubmitEditing={() => comingSoon('Food search', 5)}
         />
-      </View>
+      </Glass>
 
       {/* AI scanner */}
-      <Card style={{ backgroundColor: theme.accentSoft, borderColor: theme.accentSoft }}>
+      <Card>
         <View style={styles.scanHeader}>
-          <View style={[styles.scanIcon, { backgroundColor: theme.surface }]}>
+          <View style={[styles.scanIcon, { backgroundColor: theme.fill }]}>
             <Icon name="sparkles" size={20} color="accent" />
           </View>
           <View style={styles.scanText}>
-            <Text variant="headline">Scan a meal</Text>
+            <Text variant="heading">Scan a meal</Text>
             <Text variant="callout" color="textSecondary">
               Take a photo and AI estimates the foods, portions and macros. You review everything
               before it’s saved.
@@ -102,8 +103,6 @@ const styles = StyleSheet.create({
   segmented: {
     flexDirection: 'row',
     padding: 3,
-    borderRadius: Radius.md,
-    borderCurve: 'continuous',
   },
   segment: {
     flex: 1,
@@ -113,7 +112,7 @@ const styles = StyleSheet.create({
     borderCurve: 'continuous',
   },
   segmentLabel: {
-    fontWeight: '600',
+    fontWeight: '700',
   },
   search: {
     flexDirection: 'row',
@@ -121,12 +120,11 @@ const styles = StyleSheet.create({
     gap: Spacing[2],
     paddingHorizontal: Spacing[4],
     minHeight: 48,
-    borderRadius: Radius.md,
-    borderCurve: 'continuous',
-    borderWidth: StyleSheet.hairlineWidth,
   },
   searchInput: {
     flex: 1,
+    // Keeps the text above the glass blur layer in web browsers.
+    position: 'relative',
     ...Type.body,
     paddingVertical: Spacing[3],
   },

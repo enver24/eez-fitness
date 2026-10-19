@@ -1,4 +1,5 @@
 import Constants from 'expo-constants';
+import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
 import { Card } from '@/components/ui/card';
@@ -7,25 +8,28 @@ import { Notice } from '@/components/ui/notice';
 import { Screen } from '@/components/ui/screen';
 import { SectionHeader } from '@/components/ui/section-header';
 import { Text } from '@/components/ui/text';
+import { getTheme, withAlpha } from '@/constants/themes';
 import { sampleTargets, sampleUser } from '@/data/sample';
-import { useTheme } from '@/hooks/use-theme';
 import { comingSoon } from '@/lib/coming-soon';
 import { formatNumber } from '@/lib/nutrition';
+import { useAppearance } from '@/providers/appearance';
+
+const MODE_LABELS = { system: 'Automatic', light: 'Light', dark: 'Dark' } as const;
 
 export default function ProfileScreen() {
-  const theme = useTheme();
+  const { colors, themeId, mode } = useAppearance();
 
   return (
     <Screen title="Profile">
       {/* Who is signed in */}
       <Card style={styles.userCard}>
-        <View style={[styles.avatar, { backgroundColor: theme.accentSoft }]}>
-          <Text variant="title" color="accent">
+        <View style={[styles.avatar, { backgroundColor: withAlpha(colors.accent, 0.2) }]}>
+          <Text variant="hero" color="accent" style={styles.avatarLetter}>
             {sampleUser.firstName.charAt(0)}
           </Text>
         </View>
         <View style={styles.userText}>
-          <Text variant="headline">{sampleUser.firstName}</Text>
+          <Text variant="heading">{sampleUser.firstName}</Text>
           <Text variant="callout" color="textSecondary">
             {sampleUser.email}
           </Text>
@@ -44,6 +48,16 @@ export default function ProfileScreen() {
         />
         <ListRow icon="ruler" title="Personal details" subtitle="Age, height, weight, activity" onPress={() => comingSoon('Edit details', 4)} divider />
         <ListRow icon="leaf" title="Diet and allergies" subtitle="Preferences and foods to avoid" onPress={() => comingSoon('Diet and allergies', 4)} />
+      </Card>
+
+      <SectionHeader title="App" />
+      <Card flush>
+        <ListRow
+          icon="palette"
+          title="Appearance"
+          subtitle={`${getTheme(themeId).name} · ${MODE_LABELS[mode]}`}
+          onPress={() => router.push('/profile/appearance')}
+        />
       </Card>
 
       <SectionHeader title="Privacy and data" />
@@ -77,6 +91,10 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  avatarLetter: {
+    fontSize: 26,
+    lineHeight: 30,
   },
   userText: {
     flex: 1,

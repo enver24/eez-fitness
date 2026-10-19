@@ -63,7 +63,7 @@ export function LineChart({ values, height = 140, color = 'accent', goal }: Line
           )}
           <Path d={area} fill="url(#fill)" />
           <Path d={line} stroke={theme[color]} strokeWidth={2.5} fill="none" strokeLinecap="round" />
-          <Circle cx={last.x} cy={last.y} r={5} fill={theme[color]} stroke={theme.surface} strokeWidth={2} />
+          <Circle cx={last.x} cy={last.y} r={5} fill={theme[color]} stroke={theme.background} strokeWidth={2} />
         </Svg>
       )}
     </View>

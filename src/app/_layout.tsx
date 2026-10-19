@@ -2,15 +2,20 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
 import AppTabs from '@/components/app-tabs';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { AppearanceProvider, useAppearance } from '@/providers/appearance';
 
-/** The root of the app: applies light/dark mode and shows the tab bar. */
+/** The root of the app: loads the user's theme and shows the tab bar. */
 export default function RootLayout() {
-  const scheme = useColorScheme();
-  const isDark = scheme === 'dark';
+  return (
+    <AppearanceProvider>
+      <ThemedApp />
+    </AppearanceProvider>
+  );
+}
+
+function ThemedApp() {
+  const { colors, isDark } = useAppearance();
   const base = isDark ? DarkTheme : DefaultTheme;
-  const colors = isDark ? Colors.dark : Colors.light;
 
   return (
     <ThemeProvider
@@ -20,12 +25,12 @@ export default function RootLayout() {
           ...base.colors,
           primary: colors.accent,
           background: colors.background,
-          card: colors.surface,
+          card: colors.background,
           text: colors.text,
-          border: colors.border,
+          border: colors.separator,
         },
       }}>
-      <StatusBar style="auto" />
+      <StatusBar style={isDark ? 'light' : 'dark'} />
       <AppTabs />
     </ThemeProvider>
   );

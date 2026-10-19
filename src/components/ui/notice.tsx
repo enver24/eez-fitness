@@ -5,11 +5,11 @@ import { Text } from '@/components/ui/text';
 import { Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
-/** A small grey information box, used for disclaimers and tips. */
+/** A small information box, used for disclaimers and tips. */
 export function Notice({ children }: { children: string }) {
   const theme = useTheme();
   return (
-    <View style={[styles.box, { backgroundColor: theme.surfaceMuted }]}>
+    <View style={[styles.box, { backgroundColor: theme.fill }]}>
       <Icon name="info" size={15} color="textSecondary" />
       <Text variant="caption" color="textSecondary" style={styles.text}>
         {children}

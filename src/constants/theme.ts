@@ -1,67 +1,48 @@
 /**
- * EEZ Fitness design tokens.
+ * EEZ Fitness design tokens: fonts, text styles, spacing and corner radius.
  *
- * Every colour, font size, spacing value and corner radius used in the app
- * lives here, so the whole look can be changed from one place.
- * Screens should never hard-code colours — always read them from `useTheme()`.
+ * Colours live in `themes.ts`, because they change with the user's chosen
+ * theme and light/dark mode. Screens never hard-code colours — they read
+ * them from `useTheme()`.
  */
 
 import '@/global.css';
 
 import { Platform } from 'react-native';
 
-export const Colors = {
-  light: {
-    // Surfaces
-    background: '#F4F5F7',
-    surface: '#FFFFFF',
-    surfaceMuted: '#ECEEF1',
-    border: '#E2E5EA',
-    // Text
-    text: '#0B0D10',
-    textSecondary: '#5B6270',
-    textTertiary: '#8A919E',
-    textInverse: '#FFFFFF',
-    // Brand accent: progress rings, highlights and links
-    accent: '#077A54',
-    accentSoft: '#DCF3E9',
-    // Macronutrients
-    protein: '#E5484D',
-    carbs: '#3E8BF7',
-    fat: '#F5A524',
-    // Status
-    danger: '#D93036',
-    warning: '#B26B00',
-    track: '#E7E9EE',
-  },
-  dark: {
-    background: '#0B0D10',
-    surface: '#16191E',
-    surfaceMuted: '#1F232A',
-    border: '#272C34',
-    text: '#F4F6F8',
-    textSecondary: '#A3AAB6',
-    textTertiary: '#6E7684',
-    textInverse: '#0B0D10',
-    accent: '#34D399',
-    accentSoft: '#12352A',
-    protein: '#FF6B70',
-    carbs: '#5EA2FF',
-    fat: '#FFB547',
-    danger: '#FF5A5F',
-    warning: '#FFB547',
-    track: '#262A31',
-  },
-} as const;
+/** Every colour a screen can use. Each theme provides all of these. */
+export type ThemeColors = {
+  background: string;
+  text: string;
+  textSecondary: string;
+  textTertiary: string;
+  /** Frosted glass fill, used when real Liquid Glass isn't available. */
+  glass: string;
+  glassBorder: string;
+  /** Subtle fill for pressed rows, inputs and secondary buttons. */
+  fill: string;
+  separator: string;
+  danger: string;
+  /** The theme's main colour: links, selected tabs and the calories ring. */
+  accent: string;
+  protein: string;
+  carbs: string;
+  fat: string;
+  /** Two soft colour glows behind the glass. */
+  glow1: string;
+  glow2: string;
+  /** Main action button and the text on top of it. */
+  button: string;
+  onButton: string;
+};
 
-export type ThemeColors = { [K in keyof typeof Colors.light]: string };
 export type ThemeColor = keyof ThemeColors;
 
 export const Fonts = Platform.select({
   ios: {
     sans: 'system-ui',
     serif: 'ui-serif',
-    /** SF Pro Rounded — used for big numbers (calories, weights). */
+    /** SF Pro Rounded — used for numbers (calories, weights, reps). */
     rounded: 'ui-rounded',
     mono: 'ui-monospace',
   },
@@ -79,16 +60,40 @@ export const Fonts = Platform.select({
   },
 });
 
-/** Text styles, loosely following Apple's iOS type scale. */
+/**
+ * Text styles. `hero` and `heading` are the heavy, slanted, uppercase
+ * "gym" headings; the rest follow Apple's iOS type scale.
+ */
 export const Type = {
-  display: { fontSize: 34, lineHeight: 41, fontWeight: '700' },
-  title: { fontSize: 28, lineHeight: 34, fontWeight: '700' },
-  headline: { fontSize: 20, lineHeight: 25, fontWeight: '600' },
+  hero: {
+    fontSize: 36,
+    lineHeight: 38,
+    fontWeight: '900',
+    fontStyle: 'italic',
+    letterSpacing: -0.8,
+    textTransform: 'uppercase',
+  },
+  heading: {
+    fontSize: 20,
+    lineHeight: 24,
+    fontWeight: '900',
+    fontStyle: 'italic',
+    letterSpacing: -0.3,
+    textTransform: 'uppercase',
+  },
+  number: { fontSize: 34, lineHeight: 38, fontWeight: '800' },
+  title: { fontSize: 22, lineHeight: 28, fontWeight: '800' },
   body: { fontSize: 17, lineHeight: 22, fontWeight: '400' },
-  bodyStrong: { fontSize: 17, lineHeight: 22, fontWeight: '600' },
+  bodyStrong: { fontSize: 17, lineHeight: 22, fontWeight: '700' },
   callout: { fontSize: 15, lineHeight: 20, fontWeight: '400' },
   caption: { fontSize: 13, lineHeight: 18, fontWeight: '400' },
-  overline: { fontSize: 12, lineHeight: 16, fontWeight: '600', letterSpacing: 0.6 },
+  label: {
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: '700',
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+  },
 } as const;
 
 export type TypeVariant = keyof typeof Type;
@@ -106,12 +111,12 @@ export const Spacing = {
 } as const;
 
 export const Radius = {
-  sm: 10,
-  md: 14,
-  lg: 22,
+  sm: 12,
+  md: 18,
+  lg: 26,
   pill: 999,
 } as const;
 
 /** Extra space at the bottom of scroll views so content clears the tab bar. */
-export const BottomTabInset = Platform.select({ ios: 0, android: 80, web: 96 }) ?? 0;
+export const BottomTabInset = Platform.select({ ios: 0, android: 80, web: 100 }) ?? 0;
 export const MaxContentWidth = 640;

@@ -12,7 +12,7 @@ type SectionHeaderProps = {
 export function SectionHeader({ title, actionLabel, onAction }: SectionHeaderProps) {
   return (
     <View style={styles.row}>
-      <Text variant="headline">{title}</Text>
+      <Text variant="heading">{title}</Text>
       {actionLabel && (
         <Pressable onPress={onAction} accessibilityRole="button" hitSlop={8}>
           <Text variant="callout" color="accent" style={styles.action}>
@@ -29,9 +29,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'baseline',
     justifyContent: 'space-between',
-    marginTop: Spacing[3],
+    marginTop: Spacing[4],
   },
   action: {
-    fontWeight: '600',
+    fontWeight: '700',
   },
 });

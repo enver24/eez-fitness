@@ -23,7 +23,7 @@ export function ListRow({
   title,
   subtitle,
   icon,
-  iconColor = 'text',
+  iconColor = 'accent',
   value,
   onPress,
   destructive,
@@ -35,10 +35,10 @@ export function ListRow({
       onPress={onPress}
       disabled={!onPress}
       accessibilityRole={onPress ? 'button' : undefined}
-      style={({ pressed }) => [pressed && { backgroundColor: theme.surfaceMuted }]}>
+      style={({ pressed }) => [pressed && { backgroundColor: theme.fill }]}>
       <View style={styles.row}>
         {icon && (
-          <View style={[styles.iconBadge, { backgroundColor: theme.surfaceMuted }]}>
+          <View style={[styles.iconBadge, { backgroundColor: theme.fill }]}>
             <Icon name={icon} size={17} color={destructive ? 'danger' : iconColor} />
           </View>
         )}
@@ -53,7 +53,7 @@ export function ListRow({
           )}
         </View>
         {value && (
-          <Text variant="callout" color="textSecondary" rounded>
+          <Text variant="callout" color="textSecondary" rounded style={styles.value}>
             {value}
           </Text>
         )}
@@ -63,7 +63,7 @@ export function ListRow({
         <View
           style={[
             styles.divider,
-            { backgroundColor: theme.border, marginLeft: icon ? 68 : Spacing[5] },
+            { backgroundColor: theme.separator, marginLeft: icon ? 64 : Spacing[4] },
           ]}
         />
       )}
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing[3],
-    paddingHorizontal: Spacing[5],
+    paddingHorizontal: Spacing[4],
     paddingVertical: Spacing[3],
     minHeight: 60,
   },
@@ -91,6 +91,9 @@ const styles = StyleSheet.create({
   text: {
     flex: 1,
     gap: 2,
+  },
+  value: {
+    fontWeight: '700',
   },
   divider: {
     height: StyleSheet.hairlineWidth,

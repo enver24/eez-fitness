@@ -6,7 +6,7 @@ import { ListRow } from '@/components/ui/list-row';
 import { Screen } from '@/components/ui/screen';
 import { SectionHeader } from '@/components/ui/section-header';
 import { Text } from '@/components/ui/text';
-import { Spacing } from '@/constants/theme';
+import { Spacing, type ThemeColor } from '@/constants/theme';
 import { samplePersonalRecords, sampleWorkouts } from '@/data/sample';
 import { comingSoon } from '@/lib/coming-soon';
 import { formatNumber } from '@/lib/nutrition';
@@ -21,13 +21,13 @@ export default function WorkoutsScreen() {
 
       {/* This week */}
       <Card>
-        <Text variant="overline" color="textSecondary">
+        <Text variant="label" color="textSecondary">
           This week
         </Text>
         <View style={styles.stats}>
-          <Stat value={String(sampleWorkouts.length)} label="Workouts" />
-          <Stat value={formatNumber(weekMinutes)} label="Minutes" />
-          <Stat value={`${(weekVolume / 1000).toFixed(1)} t`} label="Volume lifted" />
+          <Stat value={String(sampleWorkouts.length)} label="Workouts" color="accent" />
+          <Stat value={formatNumber(weekMinutes)} label="Minutes" color="protein" />
+          <Stat value={`${(weekVolume / 1000).toFixed(1)}t`} label="Lifted" color="carbs" />
         </View>
       </Card>
 
@@ -38,7 +38,6 @@ export default function WorkoutsScreen() {
           <ListRow
             key={workout.name + workout.date}
             icon="dumbbell"
-            iconColor="accent"
             title={workout.name}
             subtitle={`${workout.date} · ${workout.durationMin} min · ${workout.exercises} exercises`}
             value={`${formatNumber(workout.volumeKg)} kg`}
@@ -67,10 +66,10 @@ export default function WorkoutsScreen() {
   );
 }
 
-function Stat({ value, label }: { value: string; label: string }) {
+function Stat({ value, label, color }: { value: string; label: string; color: ThemeColor }) {
   return (
     <View style={styles.stat}>
-      <Text variant="title" rounded>
+      <Text variant="number" color={color}>
         {value}
       </Text>
       <Text variant="caption" color="textSecondary">

@@ -14,6 +14,9 @@ const ICONS = {
   search: { ios: 'magnifyingglass', android: 'search', web: 'search' },
   plus: { ios: 'plus', android: 'add', web: 'add' },
   chevronRight: { ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' },
+  chevronLeft: { ios: 'chevron.left', android: 'chevron_left', web: 'chevron_left' },
+  palette: { ios: 'paintpalette.fill', android: 'palette', web: 'palette' },
+  contrast: { ios: 'circle.lefthalf.filled', android: 'contrast', web: 'contrast' },
   sunrise: { ios: 'sunrise.fill', android: 'wb_twilight', web: 'wb_twilight' },
   sun: { ios: 'sun.max.fill', android: 'light_mode', web: 'light_mode' },
   moon: { ios: 'moon.stars.fill', android: 'dark_mode', web: 'dark_mode' },
@@ -45,9 +48,11 @@ type IconProps = {
   name: IconName;
   size?: number;
   color?: ThemeColor;
+  /** A specific colour, for the rare case it isn't one of the theme's colours. */
+  tint?: string;
 };
 
-export function Icon({ name, size = 20, color = 'text' }: IconProps) {
+export function Icon({ name, size = 20, color = 'text', tint }: IconProps) {
   const theme = useTheme();
-  return <SymbolView name={ICONS[name]} size={size} tintColor={theme[color]} />;
+  return <SymbolView name={ICONS[name]} size={size} tintColor={tint ?? theme[color]} />;
 }
