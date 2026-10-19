@@ -32,6 +32,9 @@ export function Screen({ title, eyebrow, headerRight, showBack, children }: Scre
         <ScrollView
           contentInsetAdjustmentBehavior="automatic"
           contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="interactive"
+          automaticallyAdjustKeyboardInsets
           showsVerticalScrollIndicator={false}>
           {showBack && (
             <Pressable

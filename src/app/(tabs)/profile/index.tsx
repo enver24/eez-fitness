@@ -1,6 +1,6 @@
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { Alert, Platform, StyleSheet, View } from 'react-native';
 
 import { Card } from '@/components/ui/card';
 import { ListRow } from '@/components/ui/list-row';
@@ -12,12 +12,29 @@ import { getTheme, withAlpha } from '@/constants/themes';
 import { sampleTargets, sampleUser } from '@/data/sample';
 import { comingSoon } from '@/lib/coming-soon';
 import { formatNumber } from '@/lib/nutrition';
+import { supabase } from '@/lib/supabase';
 import { useAppearance } from '@/providers/appearance';
+import { useCurrentUser } from '@/providers/auth';
 
 const MODE_LABELS = { system: 'Automatic', light: 'Light', dark: 'Dark' } as const;
 
+function confirmSignOut() {
+  const signOut = () => supabase.auth.signOut();
+  // Alert buttons don't work in web browsers, so the web preview signs out directly.
+  if (Platform.OS === 'web') {
+    signOut();
+    return;
+  }
+  Alert.alert('Sign out?', 'You can log back in any time.', [
+    { text: 'Cancel', style: 'cancel' },
+    { text: 'Sign out', style: 'destructive', onPress: signOut },
+  ]);
+}
+
 export default function ProfileScreen() {
   const { colors, themeId, mode } = useAppearance();
+  const user = useCurrentUser();
+  const name = user.firstName || 'You';
 
   return (
     <Screen title="Profile">
@@ -25,13 +42,13 @@ export default function ProfileScreen() {
       <Card style={styles.userCard}>
         <View style={[styles.avatar, { backgroundColor: withAlpha(colors.accent, 0.2) }]}>
           <Text variant="hero" color="accent" style={styles.avatarLetter}>
-            {sampleUser.firstName.charAt(0)}
+            {name.charAt(0)}
           </Text>
         </View>
         <View style={styles.userText}>
-          <Text variant="heading">{sampleUser.firstName}</Text>
-          <Text variant="callout" color="textSecondary">
-            {sampleUser.email}
+          <Text variant="heading">{name}</Text>
+          <Text variant="callout" color="textSecondary" numberOfLines={1}>
+            {user.email}
           </Text>
         </View>
       </Card>
@@ -64,7 +81,7 @@ export default function ProfileScreen() {
       <Card flush>
         <ListRow icon="lock" title="Privacy policy" onPress={() => comingSoon('Privacy policy', 9)} divider />
         <ListRow icon="download" title="Export my data" onPress={() => comingSoon('Data export', 9)} divider />
-        <ListRow icon="logout" title="Sign out" onPress={() => comingSoon('Sign out', 3)} divider />
+        <ListRow icon="logout" title="Sign out" onPress={confirmSignOut} divider />
         <ListRow icon="trash" title="Delete account" destructive onPress={() => comingSoon('Account deletion', 4)} />
       </Card>
 
