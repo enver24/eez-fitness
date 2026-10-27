@@ -1,56 +1,77 @@
-# Welcome to your Expo app 👋
+# EEZ Fitness
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A cross-platform fitness and nutrition-tracking app built with **TypeScript**, **React Native (Expo)** and **Supabase**.
 
-## Get started
+EEZ Fitness brings food logging, workouts and progress tracking together in one app, with calories and macros shown against your personal targets. Energy is also shown in kilojoules, the unit used on Australian food labels.
 
-1. Install dependencies
+> **Status:** in active development. The account system and core screens are complete; food, workout and weight tracking are being built in stages.
 
+## Features
+
+### Working now
+- **Accounts:** sign up with an email verification code, sign in, sign out and reset a forgotten password (Supabase Auth)
+- **Friendly error handling:** Supabase error codes are translated into plain-language messages
+- **Screens:** home dashboard, food log, workouts, progress and profile, built with Expo Router tab navigation
+- **Custom UI components:** activity rings, line charts, progress bars and glass-effect cards
+- **Appearance settings:** light and dark themes that follow the device or a manual choice
+
+### Coming next
+- Editing goals, macro targets and personal details
+- Food search and manual food entry
+- AI meal scanner (log a meal from a photo)
+- Weight tracking and progress charts from real data
+- Workout logging and training history
+- Data export and account deletion
+
+The screens currently show placeholder data (`src/data/sample.ts`), which is replaced by each user's own data as features are built.
+
+## Security
+
+- **Encrypted sessions on the device.** Login sessions are encrypted with AES-256 before being saved. The encryption key is stored in the iOS Keychain or Android Keystore via Expo SecureStore, following Supabase's recommended approach for Expo apps.
+- **No secrets in the app.** The app only uses Supabase's public publishable key. The secret service-role key is never included in the code.
+- **Environment variables are kept out of Git.** Supabase settings live in a local `.env` file, which is ignored by Git; `.env.example` shows the format.
+- **Sessions refresh only while the app is open**, as Supabase recommends.
+
+## Tech stack
+
+| Area | Tools |
+|---|---|
+| Language | TypeScript |
+| App framework | React Native, Expo, Expo Router |
+| Backend and auth | Supabase |
+| Secure storage | Expo SecureStore, AsyncStorage, aes-js |
+| Animation and graphics | React Native Reanimated, React Native SVG |
+| Code quality | ESLint, TypeScript strict type checking |
+
+## Project structure
+
+```
+src/
+  app/          Screens (file-based routing)
+    (auth)/     Welcome, sign up, sign in, verify, password reset
+    (tabs)/     Home, log, workouts, progress, profile
+  components/   Reusable UI components
+  providers/    Auth and appearance state
+  lib/          Supabase client, error messages, nutrition helpers
+  constants/    Colours and themes
+  data/         Placeholder data used while features are built
+```
+
+## Running locally
+
+1. Install dependencies:
    ```bash
    npm install
    ```
-
-2. Start the app
-
+2. Copy `.env.example` to `.env` and add your Supabase project URL and publishable key.
+3. Start the app:
    ```bash
    npx expo start
    ```
+   Then open it in an iOS simulator, Android emulator, a development build or the web preview.
 
-In the output, you'll find options to open the app in a
+## About
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+Built by Enver Balabanel, an ICT student at Western Sydney University, as a personal project. Developed with AI-assisted tools (Claude Code).
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Copyright © 2026 Enver Balabanel. All rights reserved. See [LICENSE](LICENSE).
