@@ -6,12 +6,28 @@ EEZ Fitness brings food logging, workouts and progress tracking together in one 
 
 > **Status:** in active development. The app's design and screens are complete; the account system is written and being connected to a live backend, and food, workout and weight tracking are being built in stages.
 
+## Screenshots
+
+<p>
+  <img src="docs/screenshots/welcome.jpg" alt="Welcome screen" width="200">
+  <img src="docs/screenshots/today.jpg" alt="Today dashboard" width="200">
+  <img src="docs/screenshots/log.jpg" alt="Food log" width="200">
+  <img src="docs/screenshots/workouts.jpg" alt="Workouts" width="200">
+</p>
+<p>
+  <img src="docs/screenshots/progress.jpg" alt="Progress" width="200">
+  <img src="docs/screenshots/themes.jpg" alt="Colour themes" width="200">
+  <img src="docs/screenshots/light-mode.jpg" alt="Light mode" width="200">
+</p>
+
+*Screens currently show placeholder data.*
+
 ## Features
 
 ### Working now
 - **Screens:** home dashboard, food log, workouts, progress and profile, built with Expo Router tab navigation
 - **Custom UI components:** activity rings, line charts, progress bars and glass-effect cards
-- **Appearance settings:** light and dark themes that follow the device or a manual choice
+- **Appearance settings:** 10 colour themes, plus light and dark modes that follow the device or a manual choice
 
 ### Written, being connected to Supabase
 - **Accounts:** sign up with an email verification code, sign in, sign out and reset a forgotten password (Supabase Auth)
