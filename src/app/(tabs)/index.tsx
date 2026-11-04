@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ActivityRings } from '@/components/ui/activity-rings';
@@ -10,16 +11,13 @@ import { Screen } from '@/components/ui/screen';
 import { SectionHeader } from '@/components/ui/section-header';
 import { Text } from '@/components/ui/text';
 import { Radius, Spacing, type ThemeColor } from '@/constants/theme';
-import {
-  sampleMeals,
-  sampleWeights,
-  sampleWorkouts,
-  type MealType,
-} from '@/data/sample';
+import { sampleWeights, sampleWorkouts } from '@/data/sample';
+import { useDayEntries } from '@/hooks/use-diary';
 import { useTargets } from '@/hooks/use-profile';
 import { useTheme } from '@/hooks/use-theme';
 import { comingSoon } from '@/lib/coming-soon';
-import { formatNumber, kcalToKj, sumMacros } from '@/lib/nutrition';
+import { localDate, sumNutrition, type MealType } from '@/lib/diary';
+import { formatNumber, kcalToKj } from '@/lib/nutrition';
 
 const MEALS: { type: MealType; label: string; icon: IconName }[] = [
   { type: 'breakfast', label: 'Breakfast', icon: 'sunrise' },
@@ -31,7 +29,8 @@ const MEALS: { type: MealType; label: string; icon: IconName }[] = [
 export default function TodayScreen() {
   const theme = useTheme();
   const targets = useTargets();
-  const eaten = sumMacros(Object.values(sampleMeals).flat());
+  const entries = useDayEntries(localDate()).data ?? [];
+  const eaten = sumNutrition(entries);
   const remaining = Math.max(targets.calories - eaten.calories, 0);
   const lastWorkout = sampleWorkouts[0];
   const currentWeight = sampleWeights[sampleWeights.length - 1];
@@ -60,7 +59,7 @@ export default function TodayScreen() {
             <Text variant="label" color="accent">
               Fuel left
             </Text>
-            <Text variant="number">{formatNumber(remaining)}</Text>
+            <Text variant="number">{formatNumber(Math.round(remaining))}</Text>
             <Text variant="caption" color="textSecondary">
               kcal · {formatNumber(kcalToKj(remaining))} kJ
             </Text>
@@ -74,7 +73,7 @@ export default function TodayScreen() {
       <Button title="Scan meal" icon="camera" onPress={() => comingSoon('AI food scanner', 6)} />
 
       <View style={styles.row}>
-        <QuickAction icon="search" label="Add food" onPress={() => comingSoon('Food search', 5)} />
+        <QuickAction icon="search" label="Add food" onPress={() => router.push('/log')} />
         <QuickAction icon="scale" label="Weigh in" onPress={() => comingSoon('Weight tracking', 7)} />
       </View>
 
@@ -101,8 +100,8 @@ export default function TodayScreen() {
       <SectionHeader title="Meals" />
       <Card flush>
         {MEALS.map((meal, index) => {
-          const foods = sampleMeals[meal.type];
-          const total = sumMacros(foods).calories;
+          const foods = entries.filter((entry) => entry.meal === meal.type);
+          const total = Math.round(sumNutrition(foods).calories);
           return (
             <ListRow
               key={meal.type}
@@ -110,7 +109,7 @@ export default function TodayScreen() {
               title={meal.label}
               subtitle={foods.length ? foods.map((f) => f.name).join(', ') : 'Nothing logged yet'}
               value={total ? `${formatNumber(total)} kcal` : undefined}
-              onPress={() => comingSoon(`Log ${meal.label.toLowerCase()}`, 5)}
+              onPress={() => router.push({ pathname: '/log', params: { meal: meal.type } })}
               divider={index < MEALS.length - 1}
             />
           );
@@ -137,7 +136,7 @@ function MacroLine({
         {label}
       </Text>
       <Text variant="caption" rounded style={styles.macroValue}>
-        {eaten}/{target} g
+        {Math.round(eaten)}/{target} g
       </Text>
     </View>
   );

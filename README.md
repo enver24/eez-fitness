@@ -4,7 +4,7 @@ A cross-platform fitness and nutrition-tracking app built with **TypeScript**, *
 
 EEZ Fitness brings food logging, workouts and progress tracking together in one app, with calories and macros shown against your personal targets. Energy is also shown in kilojoules, the unit used on Australian food labels.
 
-> **Status:** in active development. Accounts, onboarding, personal targets and the database (with per-user privacy rules) are live; food, workout and weight tracking are being built in stages.
+> **Status:** in active development. Accounts, onboarding, personal targets and the food diary (with Australian food search) are live; the AI meal scanner, weight and workout tracking are being built in stages.
 
 ## Screenshots
 
@@ -20,7 +20,7 @@ EEZ Fitness brings food logging, workouts and progress tracking together in one 
   <img src="docs/screenshots/light-mode.jpg" alt="Light mode" width="200">
 </p>
 
-*Food, workout and weight screens currently show placeholder data.*
+*Workout and weight screens currently show placeholder data.*
 
 ## Features
 
@@ -33,12 +33,12 @@ EEZ Fitness brings food logging, workouts and progress tracking together in one 
 - **Onboarding:** a four-step setup for personal details, goal, activity, diet and allergies
 - **Personal targets:** daily calories and macros from the Mifflin–St Jeor equation, with a safe calorie floor and a capped deficit (unit-tested with Jest)
 - **Editable profile:** update details, goal, diet and allergies; targets recalculate automatically
+- **Food diary:** search 1,588 Australian foods (AFCD) and Australian packaged products (Open Food Facts), choose the amount and meal, add foods manually, and edit or remove entries; the Today dashboard shows real totals against your targets
 - **Account deletion:** permanently deletes the account and all of its data
 - **Friendly error handling:** Supabase error codes are translated into plain-language messages
 
 ### Coming next
 - Email verification codes and password reset by code (needs a custom email provider)
-- Food search and manual food entry
 - AI meal scanner (log a meal from a photo)
 - Weight tracking and progress charts from real data
 - Workout logging and training history
@@ -46,8 +46,14 @@ EEZ Fitness brings food logging, workouts and progress tracking together in one 
 
 The screens currently show placeholder data (`src/data/sample.ts`), which is replaced by each user's own data as features are built.
 
+## Food data
+
+- Whole and generic foods: **Australian Food Composition Database (AFCD) Release 3**, © Food Standards Australia New Zealand, licensed under [CC BY-SA 3.0 AU](http://creativecommons.org/licenses/by-sa/3.0/au/deed.en). Imported with `scripts/afcd/build_migration.py`; energy is converted from kJ to kcal. EEZ Fitness is not endorsed by FSANZ.
+- Packaged products: **[Open Food Facts](https://world.openfoodfacts.org)**, available under the [Open Database License](https://opendatacommons.org/licenses/odbl/1-0/). Searched live; set `EXPO_PUBLIC_OFF_CONTACT_EMAIL` in `.env` so Open Food Facts can identify the app.
+
 ## Security
 - **Row Level Security on every table.** Database rules ensure each user can only read and change their own rows; users can't change their own subscription plan or AI usage counters. `npm run test:privacy` proves this with two temporary users.
+- **Reference food data is read-only**, and each user's food diary is private to them.
 - **Account deletion runs in the database** and can only ever delete the caller's own account.
 - **Encrypted sessions on the device.** Login sessions are designed to be encrypted with AES-256 before being saved. The encryption key is stored in the iOS Keychain or Android Keystore via Expo SecureStore, following Supabase's recommended approach for Expo apps.
 - **No secrets in the app.** The app only uses Supabase's public publishable key. The secret service-role key is never included in the code.
@@ -81,7 +87,7 @@ src/
   lib/          Supabase client, targets calculator, profile helpers
 supabase/
   migrations/   Database tables and privacy rules (SQL)
-scripts/        Privacy test
+scripts/        Privacy test and AFCD import
   constants/    Colours and themes
   data/         Placeholder data used while features are built
 ```

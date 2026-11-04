@@ -99,6 +99,13 @@ export default function ProfileScreen() {
           title="Appearance"
           subtitle={`${getTheme(themeId).name} · ${MODE_LABELS[mode]}`}
           onPress={() => router.push('/profile/appearance')}
+          divider
+        />
+        <ListRow
+          icon="info"
+          title="Food data sources"
+          subtitle="Credits and licences"
+          onPress={() => router.push('/profile/data-sources')}
         />
       </Card>
 

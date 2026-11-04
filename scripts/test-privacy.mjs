@@ -74,6 +74,36 @@ try {
     .from('ai_usage')
     .insert({ user_id: b.id, feature: 'meal_scan', count: 0 });
   check("Users can't write their own AI usage counter", !!usageError);
+
+  // Food diary.
+  const entry = {
+    eaten_on: '2026-01-01',
+    meal: 'lunch',
+    name: 'Privacy test sandwich',
+    source: 'manual',
+    calories: 400,
+  };
+  const { data: added, error: addError } = await a.client.from('food_entries').insert(entry).select('id').single();
+  check('User A can add a food diary entry', !addError && !!added);
+
+  const { data: diaryPeek } = await b.client.from('food_entries').select('id').eq('id', added?.id);
+  check("User B can't see User A's food diary", Array.isArray(diaryPeek) && diaryPeek.length === 0);
+
+  await b.client.from('food_entries').update({ calories: 1 }).eq('id', added?.id);
+  await b.client.from('food_entries').delete().eq('id', added?.id);
+  const { data: stillThere } = await a.client.from('food_entries').select('calories').eq('id', added?.id).single();
+  check("User B can't change or delete User A's diary entry", Number(stillThere?.calories) === 400);
+
+  const { error: forgeError } = await b.client.from('food_entries').insert({ ...entry, user_id: a.id });
+  check("User B can't add entries to User A's diary", !!forgeError);
+
+  // Reference foods: readable, but not editable.
+  const { data: found } = await b.client.rpc('search_foods', { query: 'banana' });
+  check('Signed-in users can search Australian foods', Array.isArray(found) && found.length > 0);
+
+  await b.client.from('foods').update({ kcal_100g: 0 }).eq('id', found?.[0]?.id);
+  const { data: food } = await b.client.from('foods').select('kcal_100g').eq('id', found?.[0]?.id).single();
+  check("Users can't change reference food data", Number(food?.kcal_100g) > 0);
 } catch (error) {
   console.error(`\n${error.message}`);
   failures += 1;
