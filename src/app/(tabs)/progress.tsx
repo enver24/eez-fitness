@@ -10,7 +10,8 @@ import { SectionHeader } from '@/components/ui/section-header';
 import { Text } from '@/components/ui/text';
 import { Spacing } from '@/constants/theme';
 import { withAlpha } from '@/constants/themes';
-import { sampleGoalWeight, sampleLoggedDays, sampleWeights } from '@/data/sample';
+import { sampleLoggedDays, sampleWeights } from '@/data/sample';
+import { useProfile } from '@/hooks/use-profile';
 import { useTheme } from '@/hooks/use-theme';
 import { comingSoon } from '@/lib/coming-soon';
 
@@ -18,10 +19,13 @@ const DAY_LABELS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
 export default function ProgressScreen() {
   const theme = useTheme();
+  const { data: profile } = useProfile();
+  // Real weights arrive in Stage 7; until then the chart uses sample data.
+  const goalWeight = profile?.goal_weight_kg ?? 78;
   const start = sampleWeights[0];
   const current = sampleWeights[sampleWeights.length - 1];
   const change = current - start;
-  const goalProgress = (start - current) / (start - sampleGoalWeight);
+  const goalProgress = (start - current) / (start - goalWeight);
   const daysLogged = sampleLoggedDays.filter(Boolean).length;
 
   return (
@@ -47,9 +51,9 @@ export default function ProgressScreen() {
             </Text>
           </View>
         </View>
-        <LineChart values={sampleWeights} goal={sampleGoalWeight} />
+        <LineChart values={sampleWeights} goal={goalWeight} />
         <Text variant="caption" color="textTertiary">
-          Dashed line: goal of {sampleGoalWeight} kg
+          Dashed line: goal of {goalWeight} kg
         </Text>
         <Button title="Log today's weight" icon="plus" variant="secondary" size="md" onPress={() => comingSoon('Weight tracking', 7)} />
       </Card>
@@ -60,7 +64,7 @@ export default function ProgressScreen() {
         <View style={styles.goalRow}>
           <Icon name="target" size={20} color="accent" />
           <Text variant="bodyStrong" style={styles.flex}>
-            {start.toFixed(1)} kg → {sampleGoalWeight} kg
+            {start.toFixed(1)} kg → {goalWeight} kg
           </Text>
           <Text variant="callout" color="textSecondary" rounded>
             {Math.round(goalProgress * 100)}%
@@ -68,7 +72,7 @@ export default function ProgressScreen() {
         </View>
         <ProgressBar progress={goalProgress} />
         <Text variant="caption" color="textSecondary">
-          {(current - sampleGoalWeight).toFixed(1)} kg to go
+          {(current - goalWeight).toFixed(1)} kg to go
         </Text>
       </Card>
 

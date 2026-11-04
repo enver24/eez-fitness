@@ -19,19 +19,6 @@ export type LoggedFood = Macros & {
   amount: string;
 };
 
-export const sampleUser = {
-  firstName: 'Enver',
-  email: 'you@example.com',
-  goal: 'Lose fat, keep muscle',
-};
-
-export const sampleTargets: Macros = {
-  calories: 2350,
-  protein: 170,
-  carbs: 250,
-  fat: 70,
-};
-
 export const sampleMeals: Record<MealType, LoggedFood[]> = {
   breakfast: [
     { name: 'Greek yoghurt', amount: '200 g', calories: 194, protein: 20, carbs: 8, fat: 9 },
@@ -72,8 +59,6 @@ export const samplePersonalRecords = [
 export const sampleWeights = [
   86.4, 86.1, 85.9, 85.6, 85.8, 85.2, 84.9, 84.7, 84.8, 84.3, 84.1, 83.9, 84.0, 83.6, 83.4, 83.2,
 ];
-
-export const sampleGoalWeight = 78;
 
 /** Which of the last 7 days had food logged (Mon → Sun). */
 export const sampleLoggedDays = [true, true, true, false, true, true, false];

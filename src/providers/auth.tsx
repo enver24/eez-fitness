@@ -5,6 +5,7 @@
  */
 
 import type { Session } from '@supabase/supabase-js';
+import { useQueryClient } from '@tanstack/react-query';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
@@ -18,6 +19,7 @@ type Auth = {
 const AuthContext = createContext<Auth>({ session: null, isLoading: true });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const queryClient = useQueryClient();
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(isSupabaseConfigured);
 
@@ -30,11 +32,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .finally(() => setIsLoading(false));
 
     // Fires on sign in, sign out and token refresh.
-    const { data } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    const { data } = supabase.auth.onAuthStateChange((event, newSession) => {
       setSession(newSession);
+      // Forget the previous user's cached data so the next person never sees it.
+      if (event === 'SIGNED_OUT') queryClient.clear();
     });
     return () => data.subscription.unsubscribe();
-  }, []);
+  }, [queryClient]);
 
   return <AuthContext.Provider value={{ session, isLoading }}>{children}</AuthContext.Provider>;
 }

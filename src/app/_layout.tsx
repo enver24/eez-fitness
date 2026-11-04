@@ -1,37 +1,72 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
+import { LoadError } from '@/components/load-error';
 import { SetupNeeded } from '@/components/setup-needed';
+import { useProfile } from '@/hooks/use-profile';
 import { isSupabaseConfigured } from '@/lib/supabase';
 import { AppearanceProvider, useAppearance } from '@/providers/appearance';
 import { AuthProvider, useAuth } from '@/providers/auth';
 
-// Keep the splash screen up until we know whether someone is signed in.
+// Keep the splash screen up until we know who is signed in.
 SplashScreen.preventAutoHideAsync();
 
-/** The root of the app: theme, sign-in state and the top-level screens. */
+/** The root of the app: theme, sign-in state, data loading and top-level screens. */
 export default function RootLayout() {
+  const [queryClient] = useState(() => new QueryClient());
   return (
-    <AppearanceProvider>
-      <AuthProvider>
-        <ThemedApp />
-      </AuthProvider>
-    </AppearanceProvider>
+    <QueryClientProvider client={queryClient}>
+      <AppearanceProvider>
+        <AuthProvider>
+          <ThemedApp />
+        </AuthProvider>
+      </AppearanceProvider>
+    </QueryClientProvider>
   );
 }
 
 function ThemedApp() {
   const { colors, isDark } = useAppearance();
-  const { session, isLoading } = useAuth();
+  const { session, isLoading: authLoading } = useAuth();
+  const profile = useProfile();
   const base = isDark ? DarkTheme : DefaultTheme;
 
-  useEffect(() => {
-    if (!isLoading) SplashScreen.hideAsync();
-  }, [isLoading]);
+  const signedIn = !!session;
+  const loading = authLoading || (signedIn && profile.isPending);
+  const onboarded = !!profile.data?.onboarding_completed_at;
 
-  if (isLoading) return null;
+  useEffect(() => {
+    if (!loading) SplashScreen.hideAsync();
+  }, [loading]);
+
+  if (loading) return null;
+
+  let content;
+  if (!isSupabaseConfigured) {
+    content = <SetupNeeded />;
+  } else if (signedIn && profile.isError) {
+    content = <LoadError onRetry={() => profile.refetch()} />;
+  } else {
+    content = (
+      <Stack screenOptions={{ headerShown: false }}>
+        {/* Signed in and set up: the app. */}
+        <Stack.Protected guard={signedIn && onboarded}>
+          <Stack.Screen name="(tabs)" />
+        </Stack.Protected>
+        {/* Signed in but profile not set up yet. */}
+        <Stack.Protected guard={signedIn && !onboarded}>
+          <Stack.Screen name="(onboarding)" />
+        </Stack.Protected>
+        {/* Signed out: welcome and login screens. */}
+        <Stack.Protected guard={!signedIn}>
+          <Stack.Screen name="(auth)" />
+        </Stack.Protected>
+      </Stack>
+    );
+  }
 
   return (
     <ThemeProvider
@@ -47,19 +82,7 @@ function ThemedApp() {
         },
       }}>
       <StatusBar style={isDark ? 'light' : 'dark'} />
-      {isSupabaseConfigured ? (
-        <Stack screenOptions={{ headerShown: false }}>
-          {/* Signed in: the app. Signed out: welcome and login screens. */}
-          <Stack.Protected guard={!!session}>
-            <Stack.Screen name="(tabs)" />
-          </Stack.Protected>
-          <Stack.Protected guard={!session}>
-            <Stack.Screen name="(auth)" />
-          </Stack.Protected>
-        </Stack>
-      ) : (
-        <SetupNeeded />
-      )}
+      {content}
     </ThemeProvider>
   );
 }

@@ -12,11 +12,11 @@ import { Text } from '@/components/ui/text';
 import { Radius, Spacing, type ThemeColor } from '@/constants/theme';
 import {
   sampleMeals,
-  sampleTargets,
   sampleWeights,
   sampleWorkouts,
   type MealType,
 } from '@/data/sample';
+import { useTargets } from '@/hooks/use-profile';
 import { useTheme } from '@/hooks/use-theme';
 import { comingSoon } from '@/lib/coming-soon';
 import { formatNumber, kcalToKj, sumMacros } from '@/lib/nutrition';
@@ -30,8 +30,9 @@ const MEALS: { type: MealType; label: string; icon: IconName }[] = [
 
 export default function TodayScreen() {
   const theme = useTheme();
+  const targets = useTargets();
   const eaten = sumMacros(Object.values(sampleMeals).flat());
-  const remaining = Math.max(sampleTargets.calories - eaten.calories, 0);
+  const remaining = Math.max(targets.calories - eaten.calories, 0);
   const lastWorkout = sampleWorkouts[0];
   const currentWeight = sampleWeights[sampleWeights.length - 1];
   const weightChange = currentWeight - sampleWeights[0];
@@ -49,9 +50,9 @@ export default function TodayScreen() {
           size={148}
           strokeWidth={15}
           rings={[
-            { progress: eaten.calories / sampleTargets.calories, color: theme.accent },
-            { progress: eaten.protein / sampleTargets.protein, color: theme.protein },
-            { progress: eaten.carbs / sampleTargets.carbs, color: theme.carbs },
+            { progress: eaten.calories / targets.calories, color: theme.accent },
+            { progress: eaten.protein / targets.protein, color: theme.protein },
+            { progress: eaten.carbs / targets.carbs, color: theme.carbs },
           ]}
         />
         <View style={styles.legend}>
@@ -64,9 +65,9 @@ export default function TodayScreen() {
               kcal · {formatNumber(kcalToKj(remaining))} kJ
             </Text>
           </View>
-          <MacroLine label="Protein" color="protein" eaten={eaten.protein} target={sampleTargets.protein} />
-          <MacroLine label="Carbs" color="carbs" eaten={eaten.carbs} target={sampleTargets.carbs} />
-          <MacroLine label="Fat" color="fat" eaten={eaten.fat} target={sampleTargets.fat} />
+          <MacroLine label="Protein" color="protein" eaten={eaten.protein} target={targets.protein} />
+          <MacroLine label="Carbs" color="carbs" eaten={eaten.carbs} target={targets.carbs} />
+          <MacroLine label="Fat" color="fat" eaten={eaten.fat} target={targets.fat} />
         </View>
       </Card>
 

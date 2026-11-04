@@ -38,7 +38,7 @@ export function ActivityRings({
         {rings.map((ring, index) => {
           const radius = center - strokeWidth / 2 - index * (strokeWidth + gap);
           const circumference = 2 * Math.PI * radius;
-          const progress = Math.min(Math.max(ring.progress, 0), 1);
+          const progress = Number.isFinite(ring.progress) ? Math.min(Math.max(ring.progress, 0), 1) : 0;
           return (
             <G key={index}>
               <Circle

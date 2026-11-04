@@ -17,6 +17,8 @@ type ScreenProps = {
   headerRight?: ReactNode;
   /** Show a back button (for screens opened from another screen). */
   showBack?: boolean;
+  /** What the back button does. Defaults to going to the previous screen. */
+  onBack?: () => void;
   children: ReactNode;
 };
 
@@ -24,7 +26,7 @@ type ScreenProps = {
  * The standard screen layout: colour glows in the background, a big
  * slanted title, and scrollable content underneath.
  */
-export function Screen({ title, eyebrow, headerRight, showBack, children }: ScreenProps) {
+export function Screen({ title, eyebrow, headerRight, showBack, onBack, children }: ScreenProps) {
   return (
     <View style={styles.root}>
       <GlowBackground />
@@ -36,9 +38,9 @@ export function Screen({ title, eyebrow, headerRight, showBack, children }: Scre
           keyboardDismissMode="interactive"
           automaticallyAdjustKeyboardInsets
           showsVerticalScrollIndicator={false}>
-          {showBack && (
+          {(showBack || onBack) && (
             <Pressable
-              onPress={() => router.back()}
+              onPress={onBack ?? (() => router.back())}
               accessibilityRole="button"
               accessibilityLabel="Back"
               hitSlop={8}
