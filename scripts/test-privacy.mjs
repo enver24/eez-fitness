@@ -244,6 +244,19 @@ try {
     .insert({ eaten_on: '2026-01-02', meal: 'dinner', name: 'Spaghetti bolognese', source: 'plan', calories: 819 });
   check('Planned meals can be logged to the diary', !planEntryError);
 
+  // AI body previews.
+  const { error: visualForge } = await a.client
+    .from('body_visuals')
+    .insert({ user_id: a.id, storage_path: `${a.id}/visual-test.png` });
+  check("Users can't create AI previews directly (only the server can)", !!visualForge);
+
+  const { data: visualPeek } = await b.client.from('body_visuals').select('id').eq('user_id', a.id);
+  check("User B can't see User A's AI previews", visualPeek?.length === 0);
+
+  const { error: visualError } = await a.client.functions.invoke('body-visual', { body: { photoId: 'x' } });
+  const visualBody = visualError?.context ? await visualError.context.json().catch(() => ({})) : {};
+  check('AI previews require separate consent', visualError?.context?.status === 403 && visualBody.error === 'consent_required');
+
   // Reference foods: readable, but not editable.
   const { data: found } = await b.client.rpc('search_foods', { query: 'banana' });
   check('Signed-in users can search Australian foods', Array.isArray(found) && found.length > 0);

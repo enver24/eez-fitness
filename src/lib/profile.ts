@@ -37,6 +37,7 @@ export type Profile = {
   progress_photos_consent_at: string | null;
   progress_photo_reminder: PhotoReminder;
   meal_budget: 'low' | 'medium' | 'any';
+  body_visual_consent_at: string | null;
 };
 
 export type PhotoReminder = 'off' | 'week_start' | 'week_end';
@@ -45,7 +46,7 @@ export type PhotoReminder = 'off' | 'week_start' | 'week_end';
 export type ProfileUpdate = Partial<Omit<Profile, 'id'>>;
 
 const COLUMNS =
-  'id, first_name, birth_year, sex, height_cm, weight_kg, body_fat_percent, goal, goal_weight_kg, activity_level, experience, dietary_preferences, allergies, calorie_target, protein_target_g, carbs_target_g, fat_target_g, onboarding_completed_at, progress_photos_consent_at, progress_photo_reminder, meal_budget';
+  'id, first_name, birth_year, sex, height_cm, weight_kg, body_fat_percent, goal, goal_weight_kg, activity_level, experience, dietary_preferences, allergies, calorie_target, protein_target_g, carbs_target_g, fat_target_g, onboarding_completed_at, progress_photos_consent_at, progress_photo_reminder, meal_budget, body_visual_consent_at';
 
 export async function fetchProfile(userId: string): Promise<Profile> {
   const { data, error } = await supabase

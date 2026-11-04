@@ -18,6 +18,7 @@ What's left before inviting testers, roughly in order. Items marked 💳 cost mo
 
 ## Optional
 - [ ] 💳 **AI meal scanner:** add an Anthropic API key (see `docs/ai-scanner.md`).
+- [ ] 💳 **AI body previews:** add an OpenAI API key (see `docs/ai-body-preview.md`).
 
 ## Release (💳 Apple Developer Program, about A$149 a year)
 - [ ] App icon and splash screen in EEZ Fitness colours.

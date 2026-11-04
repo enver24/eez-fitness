@@ -22,7 +22,8 @@ const SECTIONS: { title: string; paragraphs: string[] }[] = [
       'Account details: your first name, email address and password. Your password is stored only as a secure hash, so nobody can read it.',
       'Health and fitness information you enter: year of birth, sex, height, weight, body fat, body measurements, goals, activity level, training experience, diet and allergies, your food diary, and your workouts. This is sensitive information, and we only collect it with the consent you gave when you signed up.',
       'Meal photos: if you use the AI scanner, the photo is sent to analyse it and is then discarded. EEZ Fitness does not store meal photos.',
-      'Progress photos: only if you choose to turn them on. They’re stored privately so only you can see them, with any notes you add, and are never sent to AI. You can delete them at any time.',
+      'Progress photos: only if you choose to turn them on. They’re stored privately so only you can see them, with any notes you add. You can delete them at any time.',
+      'AI body previews: only if you separately agree to them. The photo you choose is sent to an image AI service to create a preview, which is stored privately and deleted after 30 days unless you keep it.',
       'Settings such as your colour theme are stored only on your phone.',
     ],
   },
@@ -37,6 +38,7 @@ const SECTIONS: { title: string; paragraphs: string[] }[] = [
     paragraphs: [
       'Your account and data are stored with Supabase, our database provider, on servers in Singapore during the beta. Data is encrypted in transit and access is restricted so that each user can only see their own information.',
       'If AI meal scanning is switched on, meal photos are sent to Anthropic (based in the United States) to estimate nutrition. Anthropic does not use this data to train its models by default.',
+      'If you use AI body previews, the progress photo you choose is sent to OpenAI (based in the United States) to create the preview. OpenAI does not use API data to train its models by default.',
       'Food searches are sent to Open Food Facts to find packaged products. Only the search words are sent, never your identity.',
     ],
   },

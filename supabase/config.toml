@@ -425,3 +425,6 @@ enabled = true
 # with Supabase's newer signing keys, so the gateway check is switched off.
 [functions.analyse-meal]
 verify_jwt = false
+
+[functions.body-visual]
+verify_jwt = false

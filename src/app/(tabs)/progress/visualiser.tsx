@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
+import { AiBodyPreview } from '@/components/ai-body-preview';
 import { BodyFigure } from '@/components/body-figure';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -89,6 +90,8 @@ export default function VisualiserScreen() {
         Drawn from your height, latest weight and goal weight
         {profile.body_fat_percent !== null ? ', using your body fat estimate as the starting point' : ''}.
       </Text>
+
+      <AiBodyPreview />
     </Screen>
   );
 }
