@@ -109,12 +109,6 @@ export default function ProgressScreen() {
               </Text>
             </View>
             <ProgressBar progress={goalProgress(start.weightKg, current.weightKg, goalWeight)} />
-            <Button
-              title="See your goal illustrated"
-              variant="secondary"
-              size="md"
-              onPress={() => router.push('/progress/visualiser')}
-            />
             <Text variant="caption" color="textSecondary">
               {Math.abs(current.weightKg - goalWeight) < 0.1
                 ? 'Goal reached. Nice work!'
@@ -123,6 +117,23 @@ export default function ProgressScreen() {
           </Card>
         </>
       )}
+
+      {/* Goal visualiser: always shown, so it's easy to find */}
+      <Pressable
+        onPress={() => router.push('/progress/visualiser')}
+        accessibilityRole="button"
+        style={({ pressed }) => pressed && styles.pressed}>
+        <Card style={styles.visualiserCard}>
+          <Icon name="person" size={22} color="accent" />
+          <View style={styles.flex}>
+            <Text variant="bodyStrong">Goal visualiser</Text>
+            <Text variant="caption" color="textSecondary">
+              {goalWeight ? 'See an illustration of you now vs your goal' : 'Set a goal weight to see your goal illustrated'}
+            </Text>
+          </View>
+          <Icon name="chevronRight" size={13} color="textTertiary" />
+        </Card>
+      </Pressable>
 
       {/* Progress photos */}
       <SectionHeader
@@ -248,6 +259,15 @@ function ProgressPhotosPreview({ consented }: { consented: boolean }) {
 }
 
 const styles = StyleSheet.create({
+  visualiserCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing[3],
+  },
+  pressed: {
+    opacity: 0.8,
+    transform: [{ scale: 0.98 }],
+  },
   photoRow: {
     flexDirection: 'row',
     gap: Spacing[2],
