@@ -11,7 +11,7 @@ import {
   type TabListProps,
   type TabTriggerSlotProps,
 } from 'expo-router/ui';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View, type PressableProps } from 'react-native';
 
 import { Glass } from '@/components/ui/glass';
 import { Icon, type IconName } from '@/components/ui/icon';
@@ -61,7 +61,8 @@ function TabButton({
 }: TabTriggerSlotProps & { icon: IconName }) {
   const color = isFocused ? 'accent' : 'textTertiary';
   return (
-    <Pressable {...props} style={styles.button}>
+    // expo-router's slot props type `ref` loosely; they're valid Pressable props.
+    <Pressable {...(props as PressableProps)} style={styles.button}>
       <Icon name={icon} size={22} color={color} />
       <Text variant="caption" color={color} style={styles.label}>
         {children}

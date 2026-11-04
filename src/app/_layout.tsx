@@ -50,18 +50,20 @@ function ThemedApp() {
   } else if (signedIn && profile.isError) {
     content = <LoadError onRetry={() => profile.refetch()} />;
   } else {
+    // Where to send someone who opens a screen they're not allowed to see yet.
+    const home = !signedIn ? '/welcome' : onboarded ? '/' : '/setup';
     content = (
       <Stack screenOptions={{ headerShown: false }}>
         {/* Signed in and set up: the app. */}
-        <Stack.Protected guard={signedIn && onboarded}>
+        <Stack.Protected guard={signedIn && onboarded} redirectTo={home}>
           <Stack.Screen name="(tabs)" />
         </Stack.Protected>
         {/* Signed in but profile not set up yet. */}
-        <Stack.Protected guard={signedIn && !onboarded}>
+        <Stack.Protected guard={signedIn && !onboarded} redirectTo={home}>
           <Stack.Screen name="(onboarding)" />
         </Stack.Protected>
         {/* Signed out: welcome and login screens. */}
-        <Stack.Protected guard={!signedIn}>
+        <Stack.Protected guard={!signedIn} redirectTo={home}>
           <Stack.Screen name="(auth)" />
         </Stack.Protected>
       </Stack>

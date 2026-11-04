@@ -1,7 +1,8 @@
 import { Stack } from 'expo-router';
 
+// The first onboarding screen.
 export const unstable_settings = {
-  initialRouteName: 'setup',
+  anchor: 'setup',
 };
 
 /** Shown once, after sign-up, until the user finishes setting up their profile. */
