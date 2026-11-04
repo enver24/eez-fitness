@@ -33,6 +33,7 @@ EEZ Fitness brings food logging, workouts and progress tracking together in one 
 - **Editable profile:** update details, goal, diet and allergies; targets recalculate automatically
 - **Food diary:** search 1,588 Australian foods (AFCD) and Australian packaged products (Open Food Facts), choose the amount and meal, add foods manually, and edit or remove entries; the Today dashboard shows real totals against your targets
 - **Weight and progress:** daily weigh-ins and optional body measurements, a weight trend chart with goal line, goal progress, a 7-day food-logging streak and check-in history; the latest weight keeps calorie targets up to date
+- **Progress photos (optional, with consent):** private photos with pose and notes, a before/after comparison, and an optional weekly check-in reminder at the start or end of the training week; stored in a private Supabase Storage bucket and shown only through hour-long signed links
 - **Workout logging:** 54 built-in exercises plus your own, sets with weight and reps, "last time" hints, unfinished workouts saved on the phone, history, weekly stats, and personal records with estimated one-rep max
 - **AI meal scanner (switched off until an AI key is added):** take or choose a photo, a secure Supabase Edge Function asks Claude for structured estimates of each food, then you correct names and amounts before saving; daily scan limits, photos never stored
 - **Privacy and data:** in-app privacy policy, and Export my data (a JSON file of everything the app stores about you, via the share sheet)
@@ -51,6 +52,7 @@ See [docs/beta-checklist.md](docs/beta-checklist.md) for the full list before th
 
 ## Security
 - **Row Level Security on every table.** Database rules ensure each user can only read and change their own rows; users can't change their own subscription plan or AI usage counters. `npm run test:privacy` proves this with two temporary users.
+- **Progress photos are private files**: Storage rules only allow access to the owner's own folder, images are never cached to disk or sent to AI, and deleting an account deletes the files first.
 - **Reference food data is read-only**, and each user's food diary is private to them.
 - **Account deletion runs in the database** and can only ever delete the caller's own account.
 - **Encrypted sessions on the device.** Login sessions are designed to be encrypted with AES-256 before being saved. The encryption key is stored in the iOS Keychain or Android Keystore via Expo SecureStore, following Supabase's recommended approach for Expo apps.

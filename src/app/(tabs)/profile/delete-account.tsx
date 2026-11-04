@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Screen } from '@/components/ui/screen';
 import { Text } from '@/components/ui/text';
 import { TextField } from '@/components/ui/text-field';
+import { deleteAllPhotoFiles } from '@/lib/progress-photos';
 import { supabase } from '@/lib/supabase';
 
 const CONFIRM_WORD = 'DELETE';
@@ -19,6 +20,16 @@ export default function DeleteAccountScreen() {
   async function handleDelete() {
     setBusy(true);
     setError(undefined);
+    // Photo files aren't removed by deleting the account, so delete them first.
+    const { data: sessionData } = await supabase.auth.getSession();
+    const userId = sessionData.session?.user.id;
+    try {
+      if (userId) await deleteAllPhotoFiles(userId);
+    } catch {
+      setBusy(false);
+      setError('Couldn’t delete your photos. Check your connection and try again.');
+      return;
+    }
     // Runs in the database and can only delete the caller's own account.
     const { error: deleteError } = await supabase.rpc('delete_my_account');
     if (deleteError) {
@@ -37,9 +48,8 @@ export default function DeleteAccountScreen() {
           This can’t be undone.
         </Text>
         <Text variant="callout" color="textSecondary">
-          Your account and everything in it will be permanently deleted: your profile, goals,
-          targets and settings. From later versions this also includes your food diary, workouts,
-          weight history and photos.
+          Your account and everything in it will be permanently deleted: your profile and goals,
+          food diary, weight history, workouts and progress photos.
         </Text>
       </Card>
       <TextField

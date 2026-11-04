@@ -2,6 +2,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { PhotoCheckInCard } from '@/components/photo-check-in-card';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ListRow } from '@/components/ui/list-row';
@@ -62,6 +63,8 @@ export default function WorkoutsScreen() {
         icon="plus"
         onPress={() => router.push('/workouts/session')}
       />
+
+      <PhotoCheckInCard />
 
       <Card>
         <Text variant="label" color="textSecondary">

@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 
+import { PhotoCheckInCard } from '@/components/photo-check-in-card';
 import { ActivityRings } from '@/components/ui/activity-rings';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -79,6 +80,8 @@ export default function TodayScreen() {
         <QuickAction icon="search" label="Add food" onPress={() => router.push('/log')} />
         <QuickAction icon="scale" label="Weigh in" onPress={() => router.push('/progress/check-in')} />
       </View>
+
+      <PhotoCheckInCard />
 
       {/* Training and body stats */}
       <View style={styles.row}>

@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -10,13 +10,16 @@ import { ProgressBar } from '@/components/ui/progress-bar';
 import { Screen } from '@/components/ui/screen';
 import { SectionHeader } from '@/components/ui/section-header';
 import { Text } from '@/components/ui/text';
-import { Spacing } from '@/constants/theme';
+import { PrivatePhoto } from '@/components/private-photo';
+import { Radius, Spacing } from '@/constants/theme';
 import { withAlpha } from '@/constants/themes';
 import { useCheckIns, useFoodLoggedDays } from '@/hooks/use-check-ins';
 import { useProfile } from '@/hooks/use-profile';
+import { usePhotoUrls, useProgressPhotos } from '@/hooks/use-progress-photos';
 import { useTheme } from '@/hooks/use-theme';
 import { MEASUREMENTS, goalProgress, weightSeries, type CheckIn } from '@/lib/check-ins';
 import { localDate } from '@/lib/diary';
+import { formatPhotoDate } from '@/lib/progress-photos';
 
 function lastSevenDays() {
   return Array.from({ length: 7 }, (_, index) => {
@@ -115,6 +118,14 @@ export default function ProgressScreen() {
         </>
       )}
 
+      {/* Progress photos */}
+      <SectionHeader
+        title="Photos"
+        actionLabel={profile?.progress_photos_consent_at ? 'See all' : undefined}
+        onAction={() => router.push('/progress/photos')}
+      />
+      <ProgressPhotosPreview consented={!!profile?.progress_photos_consent_at} />
+
       {/* Consistency */}
       <SectionHeader title="Consistency" />
       <Card>
@@ -190,7 +201,59 @@ export default function ProgressScreen() {
   );
 }
 
+function ProgressPhotosPreview({ consented }: { consented: boolean }) {
+  const photos = useProgressPhotos(consented);
+  const latest = (photos.data ?? []).slice(0, 3);
+  const urls = usePhotoUrls(latest).data ?? {};
+
+  if (!consented || latest.length === 0) {
+    return (
+      <Card>
+        <Text variant="callout" color="textSecondary">
+          {consented
+            ? 'No photos yet. Photos make changes easier to see than the scale alone.'
+            : 'Optionally keep private progress photos, with notes and a before/after comparison.'}
+        </Text>
+        <Button
+          title={consented ? 'Add a photo' : 'Set up progress photos'}
+          icon="camera"
+          variant="secondary"
+          size="md"
+          onPress={() => router.push('/progress/photos')}
+        />
+      </Card>
+    );
+  }
+
+  return (
+    <Pressable onPress={() => router.push('/progress/photos')} accessibilityRole="button" accessibilityLabel="Open progress photos">
+      <View style={styles.photoRow}>
+        {latest.map((photo) => (
+          <View key={photo.id} style={styles.photoCell}>
+            <PrivatePhoto url={urls[photo.storagePath]} style={styles.photoThumb} label={`Photo from ${formatPhotoDate(photo.takenOn)}`} />
+            <Text variant="caption" color="textSecondary" numberOfLines={1}>
+              {formatPhotoDate(photo.takenOn)}
+            </Text>
+          </View>
+        ))}
+      </View>
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
+  photoRow: {
+    flexDirection: 'row',
+    gap: Spacing[2],
+  },
+  photoCell: {
+    width: '31%',
+    gap: Spacing[1],
+  },
+  photoThumb: {
+    aspectRatio: 3 / 4,
+    borderRadius: Radius.sm,
+  },
   weightHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',

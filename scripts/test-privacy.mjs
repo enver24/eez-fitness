@@ -183,6 +183,46 @@ try {
     (scanStatus === 503 && scanBody?.error === 'ai_not_configured') || (!scanError && scanData !== null),
   );
 
+  // Progress photos (private storage).
+  // A tiny valid JPEG (1×1 pixel) stands in for a real photo.
+  const jpeg = Buffer.from(
+    '/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=',
+    'base64',
+  );
+  const photoPath = `${a.id}/privacy-test.jpg`;
+  const { error: uploadError } = await a.client.storage
+    .from('progress-photos')
+    .upload(photoPath, jpeg, { contentType: 'image/jpeg' });
+  check('User A can upload a progress photo to their own folder', !uploadError);
+
+  const { error: photoRowError } = await a.client
+    .from('progress_photos')
+    .insert({ storage_path: photoPath, taken_on: '2026-01-02', pose: 'front', note: 'Week 1' });
+  check('User A can save a progress photo with a note', !photoRowError);
+
+  const { data: photoRowPeek } = await b.client.from('progress_photos').select('id').eq('storage_path', photoPath);
+  check("User B can't see User A's photo details", photoRowPeek?.length === 0);
+
+  const { error: downloadError } = await b.client.storage.from('progress-photos').download(photoPath);
+  const { data: signedPeek } = await b.client.storage.from('progress-photos').createSignedUrl(photoPath, 60);
+  const { data: listPeek } = await b.client.storage.from('progress-photos').list(a.id);
+  check(
+    "User B can't download, link to or list User A's photos",
+    !!downloadError && !signedPeek?.signedUrl && (listPeek?.length ?? 0) === 0,
+  );
+
+  await b.client.storage.from('progress-photos').remove([photoPath]);
+  const { data: stillStored } = await a.client.storage.from('progress-photos').list(a.id);
+  check("User B can't delete User A's photos", stillStored?.some((f) => f.name === 'privacy-test.jpg'));
+
+  const { error: plantError } = await b.client.storage
+    .from('progress-photos')
+    .upload(`${a.id}/planted.jpg`, jpeg, { contentType: 'image/jpeg' });
+  check("User B can't upload into User A's photo folder", !!plantError);
+
+  const { error: publicError } = await createClient(url, key).storage.from('progress-photos').download(photoPath);
+  check('Signed-out visitors can\'t download photos', !!publicError);
+
   // Reference foods: readable, but not editable.
   const { data: found } = await b.client.rpc('search_foods', { query: 'banana' });
   check('Signed-in users can search Australian foods', Array.isArray(found) && found.length > 0);
@@ -194,8 +234,12 @@ try {
   console.error(`\n${error.message}`);
   failures += 1;
 } finally {
-  // Clean up: each test user deletes their own account.
+  // Clean up: each test user deletes their photo files, then their account.
   for (const user of users) {
+    const { data: files } = await user.client.storage.from('progress-photos').list(user.id);
+    if (files?.length) {
+      await user.client.storage.from('progress-photos').remove(files.map((f) => `${user.id}/${f.name}`));
+    }
     const { error } = await user.client.rpc('delete_my_account');
     check('Test user deleted their account', !error);
   }

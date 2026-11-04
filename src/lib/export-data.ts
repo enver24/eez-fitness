@@ -8,6 +8,7 @@ import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
 import { fetchCheckIns } from '@/lib/check-ins';
+import { fetchPhotos } from '@/lib/progress-photos';
 import { supabase } from '@/lib/supabase';
 import { fetchExercises, fetchWorkouts } from '@/lib/workouts';
 
@@ -29,12 +30,13 @@ async function fetchProfileRow(userId: string) {
 
 /** Builds the export as a plain object (also used by tests). */
 export async function buildExport(userId: string, email: string | undefined) {
-  const [profile, foodDiary, checkIns, workouts, exercises] = await Promise.all([
+  const [profile, foodDiary, checkIns, workouts, exercises, photos] = await Promise.all([
     fetchProfileRow(userId),
     fetchAllFoodEntries(),
     fetchCheckIns(),
     fetchWorkouts(),
     fetchExercises(),
+    fetchPhotos(),
   ]);
   const exerciseNames = new Map(exercises.map((e) => [e.id, e.name]));
   return {
@@ -56,6 +58,8 @@ export async function buildExport(userId: string, email: string | undefined) {
       })),
     })),
     customExercises: exercises.filter((e) => e.isCustom).map((e) => e.name),
+    // Photo details only; the images aren't included, to keep the file small.
+    progressPhotos: photos.map((photo) => ({ takenOn: photo.takenOn, pose: photo.pose, note: photo.note })),
   };
 }
 
