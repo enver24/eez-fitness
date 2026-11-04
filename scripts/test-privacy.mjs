@@ -223,6 +223,27 @@ try {
   const { error: publicError } = await createClient(url, key).storage.from('progress-photos').download(photoPath);
   check('Signed-out visitors can\'t download photos', !!publicError);
 
+  // Meal plans and favourites.
+  const { error: planError } = await a.client
+    .from('planned_meals')
+    .insert({ planned_on: '2026-01-02', meal: 'dinner', meal_id: 'spaghetti-bolognese', servings: 1.5 });
+  const { error: favError } = await a.client.from('favourite_meals').insert({ meal_id: 'protein-shake' });
+  check('User A can save a meal plan and favourites', !planError && !favError);
+
+  const { data: planPeek } = await b.client.from('planned_meals').select('id').eq('user_id', a.id);
+  const { data: favPeek } = await b.client.from('favourite_meals').select('meal_id').eq('user_id', a.id);
+  check("User B can't see User A's meal plan or favourites", planPeek?.length === 0 && favPeek?.length === 0);
+
+  const { error: planForge } = await b.client
+    .from('planned_meals')
+    .insert({ user_id: a.id, planned_on: '2026-01-03', meal: 'lunch', meal_id: 'tuna-rice-bowl' });
+  check("User B can't add to User A's meal plan", !!planForge);
+
+  const { error: planEntryError } = await a.client
+    .from('food_entries')
+    .insert({ eaten_on: '2026-01-02', meal: 'dinner', name: 'Spaghetti bolognese', source: 'plan', calories: 819 });
+  check('Planned meals can be logged to the diary', !planEntryError);
+
   // Reference foods: readable, but not editable.
   const { data: found } = await b.client.rpc('search_foods', { query: 'banana' });
   check('Signed-in users can search Australian foods', Array.isArray(found) && found.length > 0);

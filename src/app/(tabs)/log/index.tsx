@@ -97,6 +97,21 @@ export default function LogScreen() {
             </Card>
           </Pressable>
 
+          <Pressable onPress={() => router.push('/log/plan')} accessibilityRole="button">
+            <Card style={styles.scanCard}>
+              <View style={[styles.scanIcon, { backgroundColor: theme.fill }]}>
+                <Icon name="calendar" size={20} color="accent" />
+              </View>
+              <View style={styles.flex}>
+                <Text variant="bodyStrong">Meal plan</Text>
+                <Text variant="caption" color="textSecondary">
+                  A week of meals that fit your targets, plus a shopping list
+                </Text>
+              </View>
+              <Icon name="chevronRight" size={13} color="textTertiary" />
+            </Card>
+          </Pressable>
+
           <SectionHeader title={`${mealLabel} today`} />
           {mealEntries.length > 0 ? (
             <Card flush>

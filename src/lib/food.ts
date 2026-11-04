@@ -7,7 +7,7 @@ import Constants from 'expo-constants';
 
 import { supabase } from '@/lib/supabase';
 
-export type FoodSource = 'afcd' | 'off' | 'manual' | 'ai';
+export type FoodSource = 'afcd' | 'off' | 'manual' | 'ai' | 'plan';
 
 /** A food that can be added to the diary, with nutrition per 100 g. */
 export type FoodItem = {
@@ -138,4 +138,5 @@ export const SOURCE_LABELS: Record<FoodSource, string> = {
   off: 'Open Food Facts (product label)',
   manual: 'Entered by you',
   ai: 'AI estimate from photo',
+  plan: 'From your meal plan',
 };
