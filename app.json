@@ -40,7 +40,8 @@
           "photosPermission": "EEZ Fitness uses your photos so you can scan a meal you photographed earlier.",
           "cameraPermission": "EEZ Fitness uses the camera so you can photograph a meal to estimate its nutrition."
         }
-      ]
+      ],
+      "expo-sharing"
     ],
     "experiments": {
       "typedRoutes": true,

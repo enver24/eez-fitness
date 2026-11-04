@@ -35,13 +35,14 @@ EEZ Fitness brings food logging, workouts and progress tracking together in one 
 - **Weight and progress:** daily weigh-ins and optional body measurements, a weight trend chart with goal line, goal progress, a 7-day food-logging streak and check-in history; the latest weight keeps calorie targets up to date
 - **Workout logging:** 54 built-in exercises plus your own, sets with weight and reps, "last time" hints, unfinished workouts saved on the phone, history, weekly stats, and personal records with estimated one-rep max
 - **AI meal scanner (switched off until an AI key is added):** take or choose a photo, a secure Supabase Edge Function asks Claude for structured estimates of each food, then you correct names and amounts before saving; daily scan limits, photos never stored
+- **Privacy and data:** in-app privacy policy, and Export my data (a JSON file of everything the app stores about you, via the share sheet)
 - **Account deletion:** permanently deletes the account and all of its data
 - **Friendly error handling:** Supabase error codes are translated into plain-language messages
 
 ### Coming next
+See [docs/beta-checklist.md](docs/beta-checklist.md) for the full list before the private beta.
 - Email verification codes and password reset by code (needs a custom email provider)
 - Switch on the AI meal scanner (needs a paid AI API key)
-- Data export
 
 ## Food data
 
@@ -86,7 +87,7 @@ src/
 supabase/
   migrations/   Database tables and privacy rules (SQL)
   functions/    Server functions (AI meal scanner)
-docs/           Guides (switching on the AI scanner)
+docs/           Guides (AI scanner, beta checklist)
 scripts/        Privacy test and AFCD import
   constants/    Colours and themes
 ```

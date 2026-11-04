@@ -1,5 +1,6 @@
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
+import { useState } from 'react';
 import { Alert, Platform, StyleSheet, View } from 'react-native';
 
 import { Card } from '@/components/ui/card';
@@ -10,7 +11,7 @@ import { SectionHeader } from '@/components/ui/section-header';
 import { Text } from '@/components/ui/text';
 import { getTheme, withAlpha } from '@/constants/themes';
 import { useProfile } from '@/hooks/use-profile';
-import { comingSoon } from '@/lib/coming-soon';
+import { exportMyData } from '@/lib/export-data';
 import { formatNumber } from '@/lib/nutrition';
 import { ACTIVITY_OPTIONS, GOAL_OPTIONS, labelFor } from '@/lib/profile';
 import { ageFromBirthYear } from '@/lib/targets';
@@ -37,7 +38,20 @@ export default function ProfileScreen() {
   const { colors, themeId, mode } = useAppearance();
   const { session } = useAuth();
   const { data: profile } = useProfile();
+  const [exporting, setExporting] = useState(false);
   if (!profile) return null;
+
+  async function handleExport() {
+    if (!session) return;
+    setExporting(true);
+    try {
+      await exportMyData(session.user.id, session.user.email);
+    } catch {
+      Alert.alert('Couldn’t export your data', 'Check your connection and try again.');
+    } finally {
+      setExporting(false);
+    }
+  }
 
   const name = profile.first_name || 'You';
   const details = [
@@ -111,8 +125,14 @@ export default function ProfileScreen() {
 
       <SectionHeader title="Privacy and data" />
       <Card flush>
-        <ListRow icon="lock" title="Privacy policy" onPress={() => comingSoon('Privacy policy', 9)} divider />
-        <ListRow icon="download" title="Export my data" onPress={() => comingSoon('Data export', 9)} divider />
+        <ListRow icon="lock" title="Privacy policy" onPress={() => router.push('/profile/privacy')} divider />
+        <ListRow
+          icon="download"
+          title={exporting ? 'Preparing your data…' : 'Export my data'}
+          subtitle="Download everything as a file"
+          onPress={exporting ? undefined : handleExport}
+          divider
+        />
         <ListRow icon="logout" title="Sign out" onPress={confirmSignOut} divider />
         <ListRow icon="trash" title="Delete account" destructive onPress={() => router.push('/profile/delete-account')} />
       </Card>
