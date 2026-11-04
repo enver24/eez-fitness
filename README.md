@@ -4,7 +4,7 @@ A cross-platform fitness and nutrition-tracking app built with **TypeScript**, *
 
 EEZ Fitness brings food logging, workouts and progress tracking together in one app, with calories and macros shown against your personal targets. Energy is also shown in kilojoules, the unit used on Australian food labels.
 
-> **Status:** in active development. Accounts, onboarding, personal targets and the food diary (with Australian food search) are live; weight tracking and workout logging are live; the AI meal scanner is being built.
+> **Status:** in active development. Accounts, onboarding, personal targets and the food diary (with Australian food search) are live; weight tracking and workout logging are live. The AI meal scanner is built and switched off until an AI key is added (see [docs/ai-scanner.md](docs/ai-scanner.md)).
 
 ## Screenshots
 
@@ -34,12 +34,13 @@ EEZ Fitness brings food logging, workouts and progress tracking together in one 
 - **Food diary:** search 1,588 Australian foods (AFCD) and Australian packaged products (Open Food Facts), choose the amount and meal, add foods manually, and edit or remove entries; the Today dashboard shows real totals against your targets
 - **Weight and progress:** daily weigh-ins and optional body measurements, a weight trend chart with goal line, goal progress, a 7-day food-logging streak and check-in history; the latest weight keeps calorie targets up to date
 - **Workout logging:** 54 built-in exercises plus your own, sets with weight and reps, "last time" hints, unfinished workouts saved on the phone, history, weekly stats, and personal records with estimated one-rep max
+- **AI meal scanner (switched off until an AI key is added):** take or choose a photo, a secure Supabase Edge Function asks Claude for structured estimates of each food, then you correct names and amounts before saving; daily scan limits, photos never stored
 - **Account deletion:** permanently deletes the account and all of its data
 - **Friendly error handling:** Supabase error codes are translated into plain-language messages
 
 ### Coming next
 - Email verification codes and password reset by code (needs a custom email provider)
-- AI meal scanner (log a meal from a photo)
+- Switch on the AI meal scanner (needs a paid AI API key)
 - Data export
 
 ## Food data
@@ -52,6 +53,7 @@ EEZ Fitness brings food logging, workouts and progress tracking together in one 
 - **Reference food data is read-only**, and each user's food diary is private to them.
 - **Account deletion runs in the database** and can only ever delete the caller's own account.
 - **Encrypted sessions on the device.** Login sessions are designed to be encrypted with AES-256 before being saved. The encryption key is stored in the iOS Keychain or Android Keystore via Expo SecureStore, following Supabase's recommended approach for Expo apps.
+- **AI key stays on the server.** The meal scanner's API key is a Supabase secret used only by the `analyse-meal` Edge Function, which verifies the user and enforces daily limits that users can't change.
 - **No secrets in the app.** The app only uses Supabase's public publishable key. The secret service-role key is never included in the code.
 - **Environment variables are kept out of Git.** Supabase settings live in a local `.env` file, which is ignored by Git; `.env.example` shows the format.
 - **Sessions refresh only while the app is open**, as Supabase recommends.
@@ -83,6 +85,8 @@ src/
   lib/          Supabase client, targets calculator, profile helpers
 supabase/
   migrations/   Database tables and privacy rules (SQL)
+  functions/    Server functions (AI meal scanner)
+docs/           Guides (switching on the AI scanner)
 scripts/        Privacy test and AFCD import
   constants/    Colours and themes
 ```

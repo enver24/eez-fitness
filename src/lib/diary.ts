@@ -179,3 +179,9 @@ export function entryToFoodItem(entry: FoodEntry): FoodItem | null {
     serving: { grams: entry.amountG, label: `Last time (${entry.amountG} g)` },
   };
 }
+
+/** Adds several entries at once (e.g. every food from a meal scan). */
+export async function addEntries(entries: NewFoodEntry[]) {
+  const { error } = await supabase.from('food_entries').insert(entries.map(toRow));
+  if (error) throw error;
+}

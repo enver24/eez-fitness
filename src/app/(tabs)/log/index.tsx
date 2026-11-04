@@ -14,7 +14,6 @@ import { Text } from '@/components/ui/text';
 import { Radius, Spacing, Type } from '@/constants/theme';
 import { useDayEntries, useFoodSearch, useRecentFoods } from '@/hooks/use-diary';
 import { useTheme } from '@/hooks/use-theme';
-import { comingSoon } from '@/lib/coming-soon';
 import { MEALS, entryToFoodItem, localDate, type FoodEntry, type MealType } from '@/lib/diary';
 import type { FoodItem } from '@/lib/food';
 import { formatNumber } from '@/lib/nutrition';
@@ -81,7 +80,9 @@ export default function LogScreen() {
         <SearchResults search={search} meal={meal} />
       ) : (
         <>
-          <Pressable onPress={() => comingSoon('AI food scanner', 6)} accessibilityRole="button">
+          <Pressable
+            onPress={() => router.push({ pathname: '/log/scan', params: { meal } })}
+            accessibilityRole="button">
             <Card style={styles.scanCard}>
               <View style={[styles.scanIcon, { backgroundColor: theme.fill }]}>
                 <Icon name="sparkles" size={20} color="accent" />
@@ -89,7 +90,7 @@ export default function LogScreen() {
               <View style={styles.flex}>
                 <Text variant="bodyStrong">Scan a meal with AI</Text>
                 <Text variant="caption" color="textSecondary">
-                  Coming soon: snap a photo to estimate it
+                  Snap a photo and check the estimate
                 </Text>
               </View>
               <Icon name="camera" size={18} color="textTertiary" />

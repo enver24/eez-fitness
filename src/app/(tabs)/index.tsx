@@ -18,7 +18,6 @@ import { weightSeries } from '@/lib/check-ins';
 import { useDayEntries } from '@/hooks/use-diary';
 import { useTargets } from '@/hooks/use-profile';
 import { useTheme } from '@/hooks/use-theme';
-import { comingSoon } from '@/lib/coming-soon';
 import { localDate, sumNutrition, type MealType } from '@/lib/diary';
 import { formatNumber, kcalToKj } from '@/lib/nutrition';
 
@@ -74,7 +73,7 @@ export default function TodayScreen() {
         </View>
       </Card>
 
-      <Button title="Scan meal" icon="camera" onPress={() => comingSoon('AI food scanner', 6)} />
+      <Button title="Scan meal" icon="camera" onPress={() => router.push('/log/scan')} />
 
       <View style={styles.row}>
         <QuickAction icon="search" label="Add food" onPress={() => router.push('/log')} />

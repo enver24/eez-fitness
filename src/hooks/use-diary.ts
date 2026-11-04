@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
 import {
+  addEntries,
   addEntry,
   deleteEntry,
   fetchDayEntries,
@@ -36,6 +37,10 @@ function useDiaryMutation<T>(mutationFn: (input: T) => Promise<void>) {
 
 export function useAddEntry() {
   return useDiaryMutation((entry: NewFoodEntry) => addEntry(entry));
+}
+
+export function useAddEntries() {
+  return useDiaryMutation((entries: NewFoodEntry[]) => addEntries(entries));
 }
 
 export function useUpdateEntry() {

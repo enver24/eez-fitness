@@ -164,6 +164,25 @@ try {
   const { error: libraryEdit } = await b.client.from('exercises').update({ name: 'Hacked' }).eq('id', library[0].id).select().single();
   check("Users can't rename built-in exercises", !!libraryEdit);
 
+  // AI meal scanning.
+  const { error: quotaHack } = await b.client.rpc('consume_ai_quota', {
+    p_user_id: b.id,
+    p_feature: 'meal_scan',
+    p_daily_limit: 1000,
+  });
+  const { error: refundHack } = await b.client.rpc('refund_ai_quota', { p_user_id: b.id, p_feature: 'meal_scan' });
+  check("Users can't use or reset AI scan limits themselves", !!quotaHack && !!refundHack);
+
+  const { data: scanData, error: scanError } = await a.client.functions.invoke('analyse-meal', {
+    body: { image: 'aGVsbG8=', mediaType: 'image/jpeg' },
+  });
+  const scanStatus = scanError?.context?.status;
+  const scanBody = scanError?.context ? await scanError.context.json().catch(() => ({})) : scanData;
+  check(
+    'Signed-in users reach the meal scanner (it reports AI is off until a key is added)',
+    (scanStatus === 503 && scanBody?.error === 'ai_not_configured') || (!scanError && scanData !== null),
+  );
+
   // Reference foods: readable, but not editable.
   const { data: found } = await b.client.rpc('search_foods', { query: 'banana' });
   check('Signed-in users can search Australian foods', Array.isArray(found) && found.length > 0);
