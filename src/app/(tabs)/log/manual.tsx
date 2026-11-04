@@ -93,9 +93,12 @@ function ManualForm({
   }
 
   function remove() {
-    const doDelete = () => deleteEntry.mutate(entry!.id, { onSuccess: () => router.back() });
+    // Only shown when editing; see the note in add.tsx.
+    if (!entry) return;
+    const { id: entryId, name: entryName } = entry;
+    const doDelete = () => deleteEntry.mutate(entryId, { onSuccess: () => router.back() });
     if (Platform.OS === 'web') return doDelete();
-    Alert.alert('Remove this food?', `${entry!.name} will be removed from your diary.`, [
+    Alert.alert('Remove this food?', `${entryName} will be removed from your diary.`, [
       { text: 'Cancel', style: 'cancel' },
       { text: 'Remove', style: 'destructive', onPress: doDelete },
     ]);

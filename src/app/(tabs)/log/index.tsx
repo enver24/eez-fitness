@@ -120,7 +120,7 @@ export default function LogScreen() {
             <>
               <SectionHeader title="Recent" />
               <Card flush>
-                {recent.data!.slice(0, 8).map((entry, index, list) => {
+                {(recent.data ?? []).slice(0, 8).map((entry, index, list) => {
                   const item = entryToFoodItem(entry);
                   return (
                     <ListRow

@@ -88,7 +88,11 @@ function AmountForm({
   }
 
   function remove() {
-    const doDelete = () => deleteEntry.mutate(entry!.id, { onSuccess: () => router.back() });
+    // Only shown when editing; the guard keeps React Compiler from reading
+    // entry.id while adding a new food (when there is no entry).
+    if (!entry) return;
+    const entryId = entry.id;
+    const doDelete = () => deleteEntry.mutate(entryId, { onSuccess: () => router.back() });
     if (Platform.OS === 'web') return doDelete();
     Alert.alert('Remove this food?', `${item.name} will be removed from your diary.`, [
       { text: 'Cancel', style: 'cancel' },
