@@ -22,11 +22,8 @@ iPhone ──(photo, ~1024 px JPEG)──► analyse-meal (Supabase Edge Functio
 1. Create an account at https://console.anthropic.com, add prepaid credit (about US$5–10 is plenty for a
    small beta), and set a **monthly spend limit** under Settings → Limits.
 2. Create an API key. **Don't paste it into chat or commit it.**
-3. Store it as a Supabase secret (run in the project folder; you'll be prompted to paste the key):
-
-   ```bash
-   npx supabase secrets set ANTHROPIC_API_KEY
-   ```
+3. Store it as a Supabase secret: Supabase dashboard → your project → **Edge Functions** → **Secrets** →
+   **Add new secret**, name `ANTHROPIC_API_KEY`, paste the key as the value, and save.
 
 4. Optional settings:
 

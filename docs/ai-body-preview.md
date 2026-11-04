@@ -17,11 +17,8 @@ image-AI key is added.
 1. Create an OpenAI Platform account at https://platform.openai.com, add prepaid credit (US$5–10) and set a
    **monthly budget limit**. Check their current usage policies allow editing photos of real people.
 2. Create an API key. **Don't paste it into chat or commit it.**
-3. Store it as a Supabase secret (you'll be prompted to paste it):
-
-   ```bash
-   npx supabase secrets set OPENAI_API_KEY
-   ```
+3. Store it as a Supabase secret: Supabase dashboard → your project → **Edge Functions** → **Secrets** →
+   **Add new secret**, name `OPENAI_API_KEY`, paste the key as the value, and save.
 
 4. Optional: `npx supabase secrets set DAILY_VISUAL_LIMIT=3 IMAGE_MODEL=gpt-image-1.5`
 5. Test with one of your own photos. If the service declines photos or the request format has changed,
