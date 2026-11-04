@@ -11,7 +11,9 @@ import { Screen } from '@/components/ui/screen';
 import { SectionHeader } from '@/components/ui/section-header';
 import { Text } from '@/components/ui/text';
 import { Radius, Spacing, type ThemeColor } from '@/constants/theme';
-import { sampleWeights, sampleWorkouts } from '@/data/sample';
+import { sampleWorkouts } from '@/data/sample';
+import { useCheckIns } from '@/hooks/use-check-ins';
+import { weightSeries } from '@/lib/check-ins';
 import { useDayEntries } from '@/hooks/use-diary';
 import { useTargets } from '@/hooks/use-profile';
 import { useTheme } from '@/hooks/use-theme';
@@ -33,8 +35,9 @@ export default function TodayScreen() {
   const eaten = sumNutrition(entries);
   const remaining = Math.max(targets.calories - eaten.calories, 0);
   const lastWorkout = sampleWorkouts[0];
-  const currentWeight = sampleWeights[sampleWeights.length - 1];
-  const weightChange = currentWeight - sampleWeights[0];
+  const weights = weightSeries(useCheckIns().data ?? []);
+  const currentWeight = weights.at(-1)?.weightKg;
+  const weightChange = currentWeight !== undefined ? currentWeight - weights[0].weightKg : 0;
   const today = new Date().toLocaleDateString('en-AU', {
     weekday: 'short',
     day: 'numeric',
@@ -74,7 +77,7 @@ export default function TodayScreen() {
 
       <View style={styles.row}>
         <QuickAction icon="search" label="Add food" onPress={() => router.push('/log')} />
-        <QuickAction icon="scale" label="Weigh in" onPress={() => comingSoon('Weight tracking', 7)} />
+        <QuickAction icon="scale" label="Weigh in" onPress={() => router.push('/progress/check-in')} />
       </View>
 
       {/* Training and body stats */}
@@ -88,11 +91,15 @@ export default function TodayScreen() {
         />
         <StatTile
           label="Weight"
-          title={`${currentWeight.toFixed(1)} kg`}
-          detail={`${weightChange > 0 ? '+' : '−'}${Math.abs(weightChange).toFixed(1)} kg`}
+          title={currentWeight !== undefined ? `${currentWeight.toFixed(1)} kg` : '–'}
+          detail={
+            weights.length > 1
+              ? `${weightChange > 0 ? '+' : weightChange < 0 ? '−' : ''}${Math.abs(weightChange).toFixed(1)} kg total`
+              : 'Tap to weigh in'
+          }
           detailColor="protein"
           numeric
-          onPress={() => comingSoon('Weight tracking', 7)}
+          onPress={() => router.push('/progress')}
         />
       </View>
 

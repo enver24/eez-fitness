@@ -4,7 +4,7 @@ A cross-platform fitness and nutrition-tracking app built with **TypeScript**, *
 
 EEZ Fitness brings food logging, workouts and progress tracking together in one app, with calories and macros shown against your personal targets. Energy is also shown in kilojoules, the unit used on Australian food labels.
 
-> **Status:** in active development. Accounts, onboarding, personal targets and the food diary (with Australian food search) are live; the AI meal scanner, weight and workout tracking are being built in stages.
+> **Status:** in active development. Accounts, onboarding, personal targets and the food diary (with Australian food search) are live; weight and progress tracking are live; workout logging and the AI meal scanner are being built.
 
 ## Screenshots
 
@@ -20,7 +20,7 @@ EEZ Fitness brings food logging, workouts and progress tracking together in one 
   <img src="docs/screenshots/light-mode.jpg" alt="Light mode" width="200">
 </p>
 
-*Workout and weight screens currently show placeholder data.*
+*The workout screen currently shows placeholder data.*
 
 ## Features
 
@@ -34,13 +34,13 @@ EEZ Fitness brings food logging, workouts and progress tracking together in one 
 - **Personal targets:** daily calories and macros from the Mifflin–St Jeor equation, with a safe calorie floor and a capped deficit (unit-tested with Jest)
 - **Editable profile:** update details, goal, diet and allergies; targets recalculate automatically
 - **Food diary:** search 1,588 Australian foods (AFCD) and Australian packaged products (Open Food Facts), choose the amount and meal, add foods manually, and edit or remove entries; the Today dashboard shows real totals against your targets
+- **Weight and progress:** daily weigh-ins and optional body measurements, a weight trend chart with goal line, goal progress, a 7-day food-logging streak and check-in history; the latest weight keeps calorie targets up to date
 - **Account deletion:** permanently deletes the account and all of its data
 - **Friendly error handling:** Supabase error codes are translated into plain-language messages
 
 ### Coming next
 - Email verification codes and password reset by code (needs a custom email provider)
 - AI meal scanner (log a meal from a photo)
-- Weight tracking and progress charts from real data
 - Workout logging and training history
 - Data export
 

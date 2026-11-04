@@ -15,6 +15,8 @@ import { Text } from '@/components/ui/text';
 import { Spacing } from '@/constants/theme';
 import { useProfile, useUpdateProfile } from '@/hooks/use-profile';
 import { useTheme } from '@/hooks/use-theme';
+import { saveCheckIn } from '@/lib/check-ins';
+import { localDate } from '@/lib/diary';
 import { targetsFor } from '@/lib/profile';
 import {
   draftFromProfile,
@@ -53,8 +55,22 @@ export default function OnboardingScreen() {
     if (Object.keys(stepErrors).length === 0) setStep(step + 1);
   }
 
-  function finish() {
+  async function finish() {
     if (!targets) return;
+    // Record the starting weight as the first weigh-in. If this fails, the
+    // weight is still saved on the profile, so carry on.
+    if (update.weight_kg) {
+      await saveCheckIn({
+        measuredOn: localDate(),
+        weightKg: update.weight_kg,
+        waist_cm: null,
+        hips_cm: null,
+        chest_cm: null,
+        arm_cm: null,
+        thigh_cm: null,
+        note: null,
+      }).catch(() => {});
+    }
     updateProfile.mutate({
       ...update,
       ...targets,

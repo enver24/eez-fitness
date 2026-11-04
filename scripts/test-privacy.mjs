@@ -97,6 +97,23 @@ try {
   const { error: forgeError } = await b.client.from('food_entries').insert({ ...entry, user_id: a.id });
   check("User B can't add entries to User A's diary", !!forgeError);
 
+  // Weight and measurements.
+  const { error: weighError } = await a.client
+    .from('body_check_ins')
+    .insert({ measured_on: '2026-01-02', weight_kg: 79.5, waist_cm: 84 });
+  check('User A can log their weight', !weighError);
+
+  const { data: synced } = await a.client.from('profiles').select('weight_kg').eq('id', a.id).single();
+  check("Logging a weight updates the user's profile weight", Number(synced?.weight_kg) === 79.5);
+
+  const { data: weightPeek } = await b.client.from('body_check_ins').select('id').eq('user_id', a.id);
+  check("User B can't see User A's weight history", Array.isArray(weightPeek) && weightPeek.length === 0);
+
+  const { error: forgeWeight } = await b.client
+    .from('body_check_ins')
+    .insert({ user_id: a.id, measured_on: '2026-01-03', weight_kg: 50 });
+  check("User B can't add weigh-ins for User A", !!forgeWeight);
+
   // Reference foods: readable, but not editable.
   const { data: found } = await b.client.rpc('search_foods', { query: 'banana' });
   check('Signed-in users can search Australian foods', Array.isArray(found) && found.length > 0);
