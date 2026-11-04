@@ -45,11 +45,28 @@ export async function fetchExercises(): Promise<Exercise[]> {
   }));
 }
 
+/** Muscle groups offered when creating an exercise (matches the built-in library). */
+export const MUSCLE_GROUPS = [
+  'Chest',
+  'Back',
+  'Shoulders',
+  'Biceps',
+  'Triceps',
+  'Legs',
+  'Hamstrings',
+  'Glutes',
+  'Calves',
+  'Core',
+  'Full body',
+  'Cardio',
+  'Other',
+];
+
 /** Adds a custom exercise to the user's own library. */
-export async function createExercise(name: string, userId: string): Promise<Exercise> {
+export async function createExercise(name: string, muscleGroup: string, userId: string): Promise<Exercise> {
   const { data, error } = await supabase
     .from('exercises')
-    .insert({ name: name.trim().slice(0, 60), muscle_group: 'Other', user_id: userId })
+    .insert({ name: name.trim().slice(0, 60), muscle_group: muscleGroup.slice(0, 30), user_id: userId })
     .select('id, name, muscle_group')
     .single();
   if (error) throw error;

@@ -18,7 +18,8 @@ export function useCreateExercise() {
   const { session } = useAuth();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (name: string) => createExercise(name, session!.user.id),
+    mutationFn: ({ name, muscleGroup }: { name: string; muscleGroup: string }) =>
+      createExercise(name, muscleGroup, session!.user.id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['exercises'] }),
   });
 }

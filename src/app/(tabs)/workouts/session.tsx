@@ -2,18 +2,17 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Alert, Platform, Pressable, StyleSheet, TextInput, View } from 'react-native';
 
+import { ExercisePicker } from '@/components/exercise-picker';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ChoiceChips } from '@/components/ui/choice';
-import { Glass } from '@/components/ui/glass';
 import { Icon } from '@/components/ui/icon';
-import { ListRow } from '@/components/ui/list-row';
 import { Screen } from '@/components/ui/screen';
 import { Text } from '@/components/ui/text';
 import { TextField } from '@/components/ui/text-field';
 import { Radius, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import { useCreateExercise, useDeleteWorkout, useExercises, useSaveWorkout, useWorkouts } from '@/hooks/use-workouts';
+import { useDeleteWorkout, useExercises, useSaveWorkout, useWorkouts } from '@/hooks/use-workouts';
 import { localDate } from '@/lib/diary';
 import {
   clearSavedDraft,
@@ -304,68 +303,6 @@ function ExerciseCard({
   );
 }
 
-function ExercisePicker({
-  exercises,
-  onPick,
-  onCancel,
-}: {
-  exercises: Exercise[];
-  onPick: (exercise: Exercise) => void;
-  onCancel: () => void;
-}) {
-  const theme = useTheme();
-  const createExercise = useCreateExercise();
-  const [query, setQuery] = useState('');
-  const words = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
-  const matches = exercises.filter((e) => words.every((w) => `${e.name} ${e.muscleGroup}`.toLowerCase().includes(w)));
-  const exactMatch = exercises.some((e) => e.name.toLowerCase() === query.trim().toLowerCase());
-
-  return (
-    <Screen title="Add exercise" onBack={onCancel}>
-      <Glass radius={Radius.md} style={styles.search}>
-        <Icon name="search" size={17} color="textTertiary" />
-        <TextInput
-          value={query}
-          onChangeText={setQuery}
-          placeholder="Search, e.g. bench or legs"
-          placeholderTextColor={theme.textTertiary}
-          autoFocus
-          autoCorrect={false}
-          style={[styles.searchInput, { color: theme.text }]}
-        />
-      </Glass>
-
-      {query.trim().length > 1 && !exactMatch && (
-        <Button
-          title={createExercise.isPending ? 'Adding…' : `Create “${query.trim()}”`}
-          icon="plus"
-          variant="secondary"
-          size="md"
-          disabled={createExercise.isPending}
-          onPress={() => createExercise.mutate(query.trim(), { onSuccess: onPick })}
-        />
-      )}
-      {createExercise.error && (
-        <Text variant="caption" color="danger">
-          Couldn’t add that exercise. You may already have one with the same name.
-        </Text>
-      )}
-
-      <Card flush>
-        {matches.slice(0, 60).map((exercise, index, list) => (
-          <ListRow
-            key={exercise.id}
-            title={exercise.name}
-            subtitle={exercise.isCustom ? `${exercise.muscleGroup} · Your exercise` : exercise.muscleGroup}
-            onPress={() => onPick(exercise)}
-            divider={index < list.length - 1}
-          />
-        ))}
-      </Card>
-    </Screen>
-  );
-}
-
 const styles = StyleSheet.create({
   flex: {
     flex: 1,
@@ -395,18 +332,5 @@ const styles = StyleSheet.create({
   removeSpace: {
     width: 24,
     alignItems: 'center',
-  },
-  search: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing[2],
-    paddingHorizontal: Spacing[4],
-    minHeight: 48,
-  },
-  searchInput: {
-    flex: 1,
-    ...Type.body,
-    paddingVertical: Spacing[3],
-    position: 'relative',
   },
 });
