@@ -55,9 +55,14 @@ function AmountForm({
   const nutrition = nutritionFor(item, valid ? amount : 0);
   const busy = addEntry.isPending || updateEntry.isPending || deleteEntry.isPending;
 
+  const servingChip =
+    item.serving && !entry ? [{ value: String(item.serving.grams), label: item.serving.label }] : [];
+  // Skip standard amounts that match the serving size, so no button appears twice.
   const quickAmounts = [
-    ...(item.serving && !entry ? [{ value: String(item.serving.grams), label: item.serving.label }] : []),
-    ...['50', '100', '150', '200'].map((g) => ({ value: g, label: `${g} g` })),
+    ...servingChip,
+    ...['50', '100', '150', '200']
+      .filter((g) => !servingChip.some((chip) => chip.value === g))
+      .map((g) => ({ value: g, label: `${g} g` })),
   ];
 
   function save() {
