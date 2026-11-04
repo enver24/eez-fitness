@@ -13,6 +13,7 @@ const ICONS = {
   sparkles: { ios: 'sparkles', android: 'auto_awesome', web: 'auto_awesome' },
   search: { ios: 'magnifyingglass', android: 'search', web: 'search' },
   plus: { ios: 'plus', android: 'add', web: 'add' },
+  minus: { ios: 'minus.circle', android: 'remove_circle_outline', web: 'remove_circle_outline' },
   chevronRight: { ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' },
   chevronLeft: { ios: 'chevron.left', android: 'chevron_left', web: 'chevron_left' },
   palette: { ios: 'paintpalette.fill', android: 'palette', web: 'palette' },

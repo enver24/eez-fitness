@@ -4,7 +4,7 @@ A cross-platform fitness and nutrition-tracking app built with **TypeScript**, *
 
 EEZ Fitness brings food logging, workouts and progress tracking together in one app, with calories and macros shown against your personal targets. Energy is also shown in kilojoules, the unit used on Australian food labels.
 
-> **Status:** in active development. Accounts, onboarding, personal targets and the food diary (with Australian food search) are live; weight and progress tracking are live; workout logging and the AI meal scanner are being built.
+> **Status:** in active development. Accounts, onboarding, personal targets and the food diary (with Australian food search) are live; weight tracking and workout logging are live; the AI meal scanner is being built.
 
 ## Screenshots
 
@@ -20,8 +20,6 @@ EEZ Fitness brings food logging, workouts and progress tracking together in one 
   <img src="docs/screenshots/light-mode.jpg" alt="Light mode" width="200">
 </p>
 
-*The workout screen currently shows placeholder data.*
-
 ## Features
 
 ### Working now
@@ -35,16 +33,14 @@ EEZ Fitness brings food logging, workouts and progress tracking together in one 
 - **Editable profile:** update details, goal, diet and allergies; targets recalculate automatically
 - **Food diary:** search 1,588 Australian foods (AFCD) and Australian packaged products (Open Food Facts), choose the amount and meal, add foods manually, and edit or remove entries; the Today dashboard shows real totals against your targets
 - **Weight and progress:** daily weigh-ins and optional body measurements, a weight trend chart with goal line, goal progress, a 7-day food-logging streak and check-in history; the latest weight keeps calorie targets up to date
+- **Workout logging:** 54 built-in exercises plus your own, sets with weight and reps, "last time" hints, unfinished workouts saved on the phone, history, weekly stats, and personal records with estimated one-rep max
 - **Account deletion:** permanently deletes the account and all of its data
 - **Friendly error handling:** Supabase error codes are translated into plain-language messages
 
 ### Coming next
 - Email verification codes and password reset by code (needs a custom email provider)
 - AI meal scanner (log a meal from a photo)
-- Workout logging and training history
 - Data export
-
-The screens currently show placeholder data (`src/data/sample.ts`), which is replaced by each user's own data as features are built.
 
 ## Food data
 
@@ -89,7 +85,6 @@ supabase/
   migrations/   Database tables and privacy rules (SQL)
 scripts/        Privacy test and AFCD import
   constants/    Colours and themes
-  data/         Placeholder data used while features are built
 ```
 
 ## Running locally

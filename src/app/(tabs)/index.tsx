@@ -11,7 +11,8 @@ import { Screen } from '@/components/ui/screen';
 import { SectionHeader } from '@/components/ui/section-header';
 import { Text } from '@/components/ui/text';
 import { Radius, Spacing, type ThemeColor } from '@/constants/theme';
-import { sampleWorkouts } from '@/data/sample';
+import { useWorkouts } from '@/hooks/use-workouts';
+import { formatWorkoutDate, workoutVolume } from '@/lib/workouts';
 import { useCheckIns } from '@/hooks/use-check-ins';
 import { weightSeries } from '@/lib/check-ins';
 import { useDayEntries } from '@/hooks/use-diary';
@@ -34,7 +35,7 @@ export default function TodayScreen() {
   const entries = useDayEntries(localDate()).data ?? [];
   const eaten = sumNutrition(entries);
   const remaining = Math.max(targets.calories - eaten.calories, 0);
-  const lastWorkout = sampleWorkouts[0];
+  const lastWorkout = useWorkouts().data?.[0];
   const weights = weightSeries(useCheckIns().data ?? []);
   const currentWeight = weights.at(-1)?.weightKg;
   const weightChange = currentWeight !== undefined ? currentWeight - weights[0].weightKg : 0;
@@ -84,10 +85,14 @@ export default function TodayScreen() {
       <View style={styles.row}>
         <StatTile
           label="Last session"
-          title={lastWorkout.name}
-          detail={`${(lastWorkout.volumeKg / 1000).toFixed(1)} t lifted`}
+          title={lastWorkout ? lastWorkout.name : 'None yet'}
+          detail={
+            lastWorkout
+              ? `${formatWorkoutDate(lastWorkout.performedOn)} · ${(workoutVolume(lastWorkout.sets) / 1000).toFixed(1)} t`
+              : 'Tap to start one'
+          }
           detailColor="carbs"
-          onPress={() => comingSoon('Workout logging', 8)}
+          onPress={() => router.push(lastWorkout ? '/workouts' : '/workouts/session')}
         />
         <StatTile
           label="Weight"

@@ -114,6 +114,56 @@ try {
     .insert({ user_id: a.id, measured_on: '2026-01-03', weight_kg: 50 });
   check("User B can't add weigh-ins for User A", !!forgeWeight);
 
+  // Workouts.
+  const { data: library } = await a.client.from('exercises').select('id').is('user_id', null).limit(1);
+  check('Users can see the built-in exercise library', library?.length === 1);
+
+  const { data: custom, error: customError } = await a.client
+    .from('exercises')
+    .insert({ name: 'Privacy test lift', user_id: a.id })
+    .select('id')
+    .single();
+  check('User A can create a custom exercise', !customError && !!custom);
+
+  const { data: workoutId, error: saveWorkoutError } = await a.client.rpc('save_workout', {
+    p_workout_id: null,
+    p_name: 'Privacy test workout',
+    p_performed_on: '2026-01-02',
+    p_duration_min: 45,
+    p_notes: null,
+    p_sets: [
+      { exercise_id: library[0].id, exercise_position: 0, set_number: 1, reps: 8, weight_kg: 60 },
+      { exercise_id: custom.id, exercise_position: 1, set_number: 1, reps: 10, weight_kg: 20 },
+    ],
+  });
+  check('User A can save a workout with sets', !saveWorkoutError && !!workoutId);
+
+  const { data: workoutPeek } = await b.client.from('workouts').select('id').eq('id', workoutId);
+  const { data: setsPeek } = await b.client.from('workout_sets').select('id').eq('workout_id', workoutId);
+  check("User B can't see User A's workouts or sets", workoutPeek?.length === 0 && setsPeek?.length === 0);
+
+  const { data: customPeek } = await b.client.from('exercises').select('id').eq('id', custom.id);
+  check("User B can't see User A's custom exercises", customPeek?.length === 0);
+
+  const { error: hijackError } = await b.client.rpc('save_workout', {
+    p_workout_id: workoutId,
+    p_name: 'Hijacked',
+    p_performed_on: '2026-01-02',
+    p_duration_min: 1,
+    p_notes: null,
+    p_sets: [{ exercise_id: library[0].id, exercise_position: 0, set_number: 1, reps: 1, weight_kg: 1 }],
+  });
+  const { data: afterHijack } = await a.client.from('workouts').select('name').eq('id', workoutId).single();
+  check("User B can't overwrite User A's workout", !!hijackError && afterHijack?.name === 'Privacy test workout');
+
+  const { error: injectError } = await b.client
+    .from('workout_sets')
+    .insert({ workout_id: workoutId, exercise_id: library[0].id, exercise_position: 0, set_number: 9, reps: 1 });
+  check("User B can't add sets to User A's workout", !!injectError);
+
+  const { error: libraryEdit } = await b.client.from('exercises').update({ name: 'Hacked' }).eq('id', library[0].id).select().single();
+  check("Users can't rename built-in exercises", !!libraryEdit);
+
   // Reference foods: readable, but not editable.
   const { data: found } = await b.client.rpc('search_foods', { query: 'banana' });
   check('Signed-in users can search Australian foods', Array.isArray(found) && found.length > 0);
