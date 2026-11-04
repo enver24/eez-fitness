@@ -109,6 +109,12 @@ export default function ProgressScreen() {
               </Text>
             </View>
             <ProgressBar progress={goalProgress(start.weightKg, current.weightKg, goalWeight)} />
+            <Button
+              title="See your goal illustrated"
+              variant="secondary"
+              size="md"
+              onPress={() => router.push('/progress/visualiser')}
+            />
             <Text variant="caption" color="textSecondary">
               {Math.abs(current.weightKg - goalWeight) < 0.1
                 ? 'Goal reached. Nice work!'
